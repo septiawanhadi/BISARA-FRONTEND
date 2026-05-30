@@ -1,0 +1,17 @@
+{
+  "short_name": "Bisara",
+  "name": "Bisara PWA SIBI Learning Platform",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "../index.html",
+  "background_color": "#F5F7FF",
+  "theme_color": "#2563FF",
+  "display": "standalone",
+  "orientation": "portrait"
+}

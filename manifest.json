@@ -1,0 +1,17 @@
+{
+  "short_name": "Bisara",
+  "name": "Bisara PWA SIBI Learning Platform",
+  "icons": [
+    {
+      "src": "Logo Sementara Kali.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#F5F7FF",
+  "theme_color": "#2563FF",
+  "display": "standalone",
+  "orientation": "portrait"
+}
