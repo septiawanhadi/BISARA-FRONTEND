@@ -88,6 +88,7 @@ export default function App() {
   const [unlockedAvatars, setUnlockedAvatars] = useState<string[]>(["timi"]);
   const [selectedGesture, setSelectedGesture] = useState<DictionaryItem>(initialDictionary[9]); // default Terima Kasih
   const [showConfetti, setShowConfetti] = useState(false);
+  const [teacherActiveTab, setTeacherActiveTab] = useState<string>('dasbor');
 
   // Authentication Flow Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -201,48 +202,93 @@ export default function App() {
             <img src="/Logo%20Sementara%20Kali.png" alt="Bisara Logo" className="h-10 w-auto object-contain" />
           </div>
 
-          <nav className="flex gap-7 h-full">
-            <button 
-              onClick={() => setCurrentView('home')} 
-              className={`flex items-center text-base font-bold h-full relative transition-colors ${
-                isNavActive('home') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
-              }`}
-            >
-              Beranda
-            </button>
-            <button 
-              onClick={() => setCurrentView('dictionary')} 
-              className={`flex items-center text-base font-bold h-full relative transition-colors ${
-                isNavActive('dictionary') || isNavActive('camera-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
-              }`}
-            >
-              Kosakata
-            </button>
-            <button 
-              onClick={() => setCurrentView('camera-translator')} 
-              className={`flex items-center text-base font-bold h-full relative transition-colors ${
-                isNavActive('camera-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
-              }`}
-            >
-              Sign-to-Text
-            </button>
-            <button 
-              onClick={() => setCurrentView('voice-translator')} 
-              className={`flex items-center text-base font-bold h-full relative transition-colors ${
-                isNavActive('voice-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
-              }`}
-            >
-              Voice-to-Sign
-            </button>
-            <button 
-              onClick={() => setCurrentView('quiz')} 
-              className={`flex items-center text-base font-bold h-full relative transition-colors ${
-                isNavActive('quiz') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
-              }`}
-            >
-              Tugas
-            </button>
-          </nav>
+          {user.role === 'Guru' ? (
+            <nav className="flex gap-7 h-full">
+              <button 
+                onClick={() => setTeacherActiveTab('dasbor')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  teacherActiveTab === 'dasbor' ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Dasbor
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('kelas')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  teacherActiveTab === 'kelas' ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Manajemen Kelas
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('progress')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  teacherActiveTab === 'progress' ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Pemantauan
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('quiz-manager')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  teacherActiveTab === 'quiz-manager' ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Quiz Manager
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('profil')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  teacherActiveTab === 'profil' ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Pengaturan
+              </button>
+            </nav>
+          ) : (
+            <nav className="flex gap-7 h-full">
+              <button 
+                onClick={() => setCurrentView('home')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  isNavActive('home') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Beranda
+              </button>
+              <button 
+                onClick={() => setCurrentView('dictionary')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  isNavActive('dictionary') || isNavActive('camera-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Kosakata
+              </button>
+              <button 
+                onClick={() => setCurrentView('camera-translator')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  isNavActive('camera-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Sign-to-Text
+              </button>
+              <button 
+                onClick={() => setCurrentView('voice-translator')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  isNavActive('voice-translator') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Voice-to-Sign
+              </button>
+              <button 
+                onClick={() => setCurrentView('quiz')} 
+                className={`flex items-center text-base font-bold h-full relative transition-colors ${
+                  isNavActive('quiz') ? 'text-bisara-accent-muted border-b-4 border-bisara-accent-muted' : 'text-bisara-navy hover:text-bisara-accent'
+                }`}
+              >
+                Tugas
+              </button>
+            </nav>
+          )}
 
           <div className="flex items-center gap-6">
             {/* Server heartbeat badge */}
@@ -256,7 +302,16 @@ export default function App() {
               <span className="absolute top-2.5 right-3 w-2 h-2 rounded-full bg-bisara-pink" />
             </button>
 
-            <div className="flex items-center gap-3 cursor-pointer p-1.5 rounded-md hover:bg-slate-100 transition-colors">
+            <div 
+              onClick={() => {
+                if (user.role === 'Guru') {
+                  setTeacherActiveTab('profil');
+                } else {
+                  setCurrentView('avatar');
+                }
+              }}
+              className="flex items-center gap-3 cursor-pointer p-1.5 rounded-md hover:bg-slate-100 transition-colors"
+            >
               <div className="text-right">
                 <div className="text-sm font-extrabold text-bisara-navy leading-none">{user.nickname}</div>
                 <div className="text-[11px] text-slate-400 font-bold mt-0.5">{user.username} ({user.role === 'student' ? 'Murid' : 'Guru'})</div>
@@ -561,7 +616,16 @@ export default function App() {
 
         {/* HOME SCREEN */}
         {currentView === 'home' && (
-          user.role === 'Guru' ? <TeacherDashboard /> : <Home user={user} onNavigate={setCurrentView} />
+          user.role === 'Guru' ? (
+            <TeacherDashboard 
+              activeTab={teacherActiveTab} 
+              setActiveTab={setTeacherActiveTab} 
+              user={user}
+              onUpdateProfile={(updatedFields) => setUser(prev => ({ ...prev, ...updatedFields }))}
+            />
+          ) : (
+            <Home user={user} onNavigate={setCurrentView} />
+          )
         )}
 
         {/* DICTIONARY SCREEN */}
