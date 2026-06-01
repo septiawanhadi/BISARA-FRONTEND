@@ -6,3 +6,6 @@ Thumbs.db
 .gemini/
 .antigravity/
 .antigravity-ide/
+
+.vercel
+.env*.local

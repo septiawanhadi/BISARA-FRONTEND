@@ -13,22 +13,12 @@ export const Home: React.FC<HomeProps> = ({ user, onNavigate }) => {
 
   return (
     <div className="w-full">
-      <div className="mb-[35px]">
-        <h2 className="font-zain text-5xl font-extrabold text-bisara-navy">
-          Halo, Teman Pintar!
-        </h2>
-        <p className="text-xl text-slate-500 font-semibold">
-          Sudah siap belajar bareng BISARA?
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-7 mb-10">
         {/* Card 1: Kosakata */}
         <Card 
           onClick={() => onNavigate('dictionary')}
           className="border-b-4 border-bisara-accent relative overflow-hidden flex flex-col items-center cursor-pointer"
         >
-          <div className="absolute top-[-30px] right-[-30px] w-[100px] h-[100px] rounded-full bg-bisara-accent opacity-[0.15]" />
           <div className="w-20 h-20 bg-bisara-accent text-white rounded-[20px] flex items-center justify-center shadow-md mb-6 hover:rotate-6 hover:scale-110 transition-transform duration-300">
             <BookOpen size={36} />
           </div>
@@ -43,7 +33,6 @@ export const Home: React.FC<HomeProps> = ({ user, onNavigate }) => {
           onClick={() => onNavigate('voice-translator')}
           className="border-b-4 border-bisara-orange relative overflow-hidden flex flex-col items-center cursor-pointer"
         >
-          <div className="absolute top-[-30px] right-[-30px] w-[100px] h-[100px] rounded-full bg-bisara-orange opacity-[0.15]" />
           <div className="w-20 h-20 bg-gradient-to-br from-bisara-yellow to-bisara-orange text-white rounded-[20px] flex items-center justify-center shadow-md mb-6 hover:rotate-6 hover:scale-110 transition-transform duration-300">
             <Mic size={36} />
           </div>
@@ -58,7 +47,6 @@ export const Home: React.FC<HomeProps> = ({ user, onNavigate }) => {
           onClick={() => onNavigate('camera-translator')}
           className="border-b-4 border-bisara-pink relative overflow-hidden flex flex-col items-center cursor-pointer"
         >
-          <div className="absolute top-[-30px] right-[-30px] w-[100px] h-[100px] rounded-full bg-bisara-pink opacity-[0.15]" />
           <div className="w-20 h-20 bg-bisara-pink text-white rounded-[20px] flex items-center justify-center shadow-md mb-6 hover:rotate-6 hover:scale-110 transition-transform duration-300">
             <Camera size={36} />
           </div>
