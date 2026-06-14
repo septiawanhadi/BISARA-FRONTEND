@@ -4,6 +4,7 @@ import { Alert } from '../ui/Alert';
 import { ArrowLeft, Mic, Play } from 'lucide-react';
 import type { DictionaryItem } from '../../types';
 import { fuzzyMatchWord } from '../../lib/fuzzyMatcher';
+import { ApiService } from '../../lib/api';
 
 interface VoiceTranslatorProps {
   avatarId: string;
@@ -102,15 +103,30 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
     }, 1000) as any;
   };
 
-  const processVoiceSpelling = (phrase: string) => {
-    const matched = fuzzyMatchWord(phrase, dictionary);
-    if (matched) {
-      setStatusBadge(`Mendeteksi: ${matched.word}`);
-      playAvatarGesture(matched.clip);
-    } else {
-      setStatusBadge("Gagal Mengartikan");
-      setTranscript(`Maaf, kata kunci untuk "${phrase}" belum tersedia. Coba ucapkan "Makan", "Minum", "Tolong", atau "Terima Kasih".`);
-      playAvatarGesture("scratch_head");
+  const processVoiceSpelling = async (phrase: string) => {
+    setStatusBadge("Mencari...");
+    try {
+      const res = await ApiService.searchDictionary(phrase);
+      if (res.matched && res.word && res.clip) {
+        setStatusBadge(`Mendeteksi: ${res.word} (${Math.round((res.confidence || 1) * 100)}%)`);
+        playAvatarGesture(res.clip);
+      } else {
+        setStatusBadge("Gagal Mengartikan");
+        setTranscript(`Maaf, kata kunci untuk "${phrase}" belum tersedia. Coba ucapkan "Makan", "Minum", "Tolong", atau "Terima Kasih".`);
+        playAvatarGesture("scratch_head");
+      }
+    } catch (e) {
+      console.error(e);
+      // Fail-safe local match fallback
+      const matched = fuzzyMatchWord(phrase, dictionary);
+      if (matched) {
+        setStatusBadge(`Mendeteksi (Lokal): ${matched.word}`);
+        playAvatarGesture(matched.clip);
+      } else {
+        setStatusBadge("Gagal Mengartikan");
+        setTranscript(`Maaf, kata kunci untuk "${phrase}" belum tersedia. Coba ucapkan "Makan", "Minum", "Tolong", atau "Terima Kasih".`);
+        playAvatarGesture("scratch_head");
+      }
     }
   };
 

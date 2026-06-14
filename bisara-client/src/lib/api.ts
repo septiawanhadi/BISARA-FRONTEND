@@ -79,6 +79,43 @@ export const ApiService = {
       }
     }
 
+    if (endpoint.includes('/dictionary/search')) {
+      const phrase = (body.phrase || '').toLowerCase();
+      const vocabulary: Record<string, { word: string; clip: string }> = {
+        'makan': { word: 'Makan', clip: 'makan' },
+        'minum': { word: 'Minum', clip: 'minum' },
+        'tolong': { word: 'Tolong', clip: 'tolong' },
+        'terima kasih': { word: 'Terima Kasih', clip: 'terima-kasih' },
+        'halo': { word: 'Halo', clip: 'halo' },
+        'belajar': { word: 'Belajar', clip: 'belajar' },
+        'rumah': { word: 'Rumah', clip: 'rumah' },
+        'sekolah': { word: 'Sekolah', clip: 'sekolah' },
+        'buku': { word: 'Buku', clip: 'buku' },
+        'saya': { word: 'Saya', clip: 'saya' },
+        'kamu': { word: 'Kamu', clip: 'kamu' },
+        'guru': { word: 'Guru', clip: 'guru' }
+      };
+
+      let bestMatch: any = null;
+      let highestScore = 0;
+
+      Object.keys(vocabulary).forEach(key => {
+        if (phrase.includes(key) || key.includes(phrase)) {
+          const score = Math.min(key.length, phrase.length) / Math.max(key.length, phrase.length);
+          if (score > highestScore) {
+            highestScore = score;
+            bestMatch = vocabulary[key];
+          }
+        }
+      });
+
+      if (highestScore >= 0.7 && bestMatch) {
+        return { matched: true, word: bestMatch.word, clip: bestMatch.clip, confidence: highestScore } as unknown as T;
+      } else {
+        return { matched: false } as unknown as T;
+      }
+    }
+
     // Default empty mock objects
     return body as T;
   },
@@ -97,6 +134,13 @@ export const ApiService = {
     return this.request<UserResponse>('/user/sync', {
       method: 'POST',
       body: JSON.stringify(user)
+    });
+  },
+
+  async searchDictionary(phrase: string): Promise<{ matched: boolean; word?: string; clip?: string; confidence?: number }> {
+    return this.request<{ matched: boolean; word?: string; clip?: string; confidence?: number }>('/dictionary/search', {
+      method: 'POST',
+      body: JSON.stringify({ phrase })
     });
   }
 };

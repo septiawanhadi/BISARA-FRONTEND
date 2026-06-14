@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { InferenceSocketService } from '../../lib/api';
 
 interface CameraPreviewProps {
   isQuizMode?: boolean;
@@ -14,9 +15,14 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   const [cameraActive, setCameraActive] = useState(false);
   const [statusText, setStatusText] = useState('Status: Kamera Mati');
   const [metricsText, setMetricsText] = useState('Akurasi: -- | Conf: --');
+  const [lowLightWarning, setLowLightWarning] = useState(false);
+  const [outOfFrame, setOutOfFrame] = useState(false);
+  const [highLatency, setHighLatency] = useState(false);
+  const [latencyVal, setLatencyVal] = useState<number | null>(null);
   
   const streamRef = useRef<MediaStream | null>(null);
   const animationIdRef = useRef<number | null>(null);
+  const socketRef = useRef<InferenceSocketService | null>(null);
 
   const toggleCamera = async () => {
     if (cameraActive) {
@@ -42,6 +48,15 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   };
 
   const stopCamera = () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+    setLowLightWarning(false);
+    setOutOfFrame(false);
+    setHighLatency(false);
+    setLatencyVal(null);
+
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -85,6 +100,24 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
 
     canvas.width = canvas.parentElement?.clientWidth || 640;
     canvas.height = canvas.parentElement?.clientHeight || 480;
+
+    // Connect to mock/real WebSocket AI Inference Server as defined in Section 5
+    const socket = new InferenceSocketService(isQuizMode ? 'quiz' : 'sandbox');
+    socket.onStatusChange((status, latency) => {
+      setStatusText(status);
+      if (latency) {
+        setLatencyVal(latency);
+        setHighLatency(latency > 500);
+      }
+    });
+    socket.onResult((res) => {
+      if (isQuizMode && onAccuracyUpdate) {
+        onAccuracyUpdate(res.accuracy);
+      }
+      setMetricsText(`Akurasi: ${res.accuracy}% | Conf: ${res.confidence.toFixed(2)}`);
+    });
+    socket.connect();
+    socketRef.current = socket;
 
     let frameCount = 0;
     
@@ -147,19 +180,82 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       ctx.stroke();
 
       // Hands
-      drawHandJoints(ctx, points.leftWrist.x + gestureOffsetLeftX, points.leftWrist.y + gestureOffsetLeftY, frameCount);
-      drawHandJoints(ctx, points.rightWrist.x + driftX, points.rightWrist.y + driftY, frameCount);
+      const leftWristX = points.leftWrist.x + gestureOffsetLeftX;
+      const leftWristY = points.leftWrist.y + gestureOffsetLeftY;
+      const rightWristX = points.rightWrist.x + driftX;
+      const rightWristY = points.rightWrist.y + driftY;
 
-      if (frameCount % 30 === 0) {
-        const acc = Math.floor(65 + Math.sin(frameCount) * 15);
-        const conf = (0.7 + Math.sin(frameCount) * 0.15).toFixed(2);
+      drawHandJoints(ctx, leftWristX, leftWristY, frameCount);
+      drawHandJoints(ctx, rightWristX, rightWristY, frameCount);
+
+      // --- ERR-02: Check if hand landmarks coordinates go out of frame boundaries ---
+      const borderMargin = 45;
+      const isOut = (
+        leftWristX < borderMargin || 
+        leftWristX > canvas.width - borderMargin || 
+        leftWristY < borderMargin || 
+        leftWristY > canvas.height - borderMargin ||
+        rightWristX < borderMargin ||
+        rightWristX > canvas.width - borderMargin ||
+        rightWristY < borderMargin ||
+        rightWristY > canvas.height - borderMargin
+      );
+      setOutOfFrame(isOut);
+
+      // --- ERR-01: Real-time Camera Luminance Check ---
+      if (videoRef.current && videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+        try {
+          const width = 80;
+          const height = 60;
+          const sampleCtx = canvas.getContext('2d');
+          if (sampleCtx) {
+            const buffer = sampleCtx.getImageData(canvas.width / 2 - width / 2, canvas.height / 2 - height / 2, width, height);
+            const data = buffer.data;
+            let sum = 0;
+            for (let i = 0; i < data.length; i += 4) {
+              sum += (0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+            }
+            const brightness = sum / (width * height);
+            // If average pixel brightness drops below 30 (severe low light)
+            setLowLightWarning(brightness < 30);
+          }
+        } catch (e) {
+          // Ignore canvas read restrictions
+        }
+      }
+
+      // --- ERR-05: Network Latency Spike Simulation (triggers every 6s) ---
+      if (frameCount % 180 === 0) {
+        setHighLatency(true);
+        setLatencyVal(680);
+        setStatusText("Status: Latensi Tinggi...");
+        setMetricsText("Akurasi: -- | Conf: -- | Latency: 680ms");
         
-        if (isQuizMode && onAccuracyUpdate) {
-          onAccuracyUpdate(acc);
-          setMetricsText(`Akurasi: ${acc}%`);
-        } else {
-          setStatusText("Status: Mendeteksi...");
-          setMetricsText(`Akurasi: ${acc}% | Conf: ${conf}`);
+        setTimeout(() => {
+          setHighLatency(false);
+          setLatencyVal(12);
+        }, 2000);
+      }
+
+      // --- PUSH SEQUENCE TO SOCKET (Every 30 frames / 1s) ---
+      if (frameCount % 30 === 0 && socketRef.current) {
+        const simulatedLandmarks = [
+          { x: leftWristX / canvas.width, y: leftWristY / canvas.height, z: 0 },
+          { x: rightWristX / canvas.width, y: rightWristY / canvas.height, z: 0 }
+        ];
+        socketRef.current.sendJointLandmarks(simulatedLandmarks);
+
+        // Fallback update metrics when server matches
+        if (!highLatency) {
+          const acc = Math.floor(75 + Math.sin(frameCount) * 15);
+          const conf = (0.75 + Math.sin(frameCount) * 0.15).toFixed(2);
+          if (isQuizMode && onAccuracyUpdate) {
+            onAccuracyUpdate(acc);
+            setMetricsText(`Akurasi: ${acc}%`);
+          } else {
+            setStatusText("Status: Mendeteksi...");
+            setMetricsText(`Akurasi: ${acc}% | Conf: ${conf} | Latency: 12ms`);
+          }
         }
       }
 
@@ -200,8 +296,8 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
-      <div className="relative w-full bg-white border-2 border-bisara-accent rounded-lg p-4 shadow-md">
+    <div className="flex flex-col items-center gap-6 w-full font-nunito">
+      <div className={`relative w-full bg-white border-4 ${outOfFrame ? 'border-bisara-pink animate-pulse' : 'border-bisara-accent'} rounded-lg p-4 shadow-md transition-colors duration-300`}>
         {/* Username overlay */}
         <div className="absolute top-6 left-6 bg-slate-800 bg-opacity-70 text-white font-extrabold px-4 py-2 rounded-full z-10 backdrop-blur-sm">
           Anya
@@ -212,6 +308,9 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
           <span className="w-2.5 h-2.5 rounded-full bg-bisara-pink inline-block mr-2 animate-ping"></span>
           <span>{statusText}</span>
           <div className="mt-1 opacity-80">{metricsText}</div>
+          {latencyVal !== null && (
+            <div className="mt-0.5 text-[10px] opacity-75 font-nunito">Latensi: {latencyVal}ms</div>
+          )}
         </div>
 
         <div className="relative w-full aspect-[4/3] bg-slate-900 rounded-md overflow-hidden">
@@ -223,9 +322,33 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
           />
           <canvas 
             ref={canvasRef} 
-            className="w-full h-full absolute top-0 left-0 z-5 pointer-events-none" 
+            className="w-full h-full absolute top-0 left-0 z-[5] pointer-events-none" 
           />
-          <div className="absolute top-[15%] left-[15%] w-[70%] h-[70%] border-2 border-dashed border-yellow-400 opacity-60 rounded-lg pointer-events-none z-6" />
+          <div className="absolute top-[15%] left-[15%] w-[70%] h-[70%] border-2 border-dashed border-yellow-400 opacity-60 rounded-lg pointer-events-none z-[6]" />
+
+          {/* ERR-01: Low Light Overlay */}
+          {lowLightWarning && (
+            <div className="absolute inset-0 bg-slate-900 bg-opacity-85 flex flex-col items-center justify-center text-center p-6 z-20">
+              <span className="text-4xl mb-2 animate-bounce">💡</span>
+              <span className="text-white font-extrabold text-lg font-zain tracking-wide">Pencahayaan Rendah (ERR-01)</span>
+              <span className="text-slate-300 text-xs mt-1 font-semibold max-w-[280px]">Mohon nyalakan lampu agar AI dapat mendeteksi dengan baik.</span>
+            </div>
+          )}
+
+          {/* ERR-02: Out of Frame Warning Pill */}
+          {outOfFrame && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-bisara-pink text-white px-4 py-1.5 rounded-full z-20 text-[10px] font-black uppercase tracking-wider shadow font-zain">
+              Keluar Batas (ERR-02)
+            </div>
+          )}
+
+          {/* ERR-05: Latency Spike Notification Bar */}
+          {highLatency && (
+            <div className="absolute bottom-4 left-4 right-4 bg-red-600 bg-opacity-95 text-white p-3 rounded-md shadow-md z-20 text-[10px] font-bold flex items-center gap-2 animate-bounce">
+              <span className="w-2.5 h-2.5 rounded-full bg-white inline-block animate-ping"></span>
+              <span>Koneksi server lambat (Latensi Tinggi). Membuka ulang jalur komunikasi...</span>
+            </div>
+          )}
         </div>
       </div>
 
