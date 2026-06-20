@@ -17,30 +17,15 @@ import {
   Mail,
   School
 } from 'lucide-react';
-import type { UserProfile } from '../../types';
+import type { UserProfile, Student, Classroom } from '../../types';
 
 interface TeacherDashboardProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   user: UserProfile;
   onUpdateProfile: (updatedFields: Partial<UserProfile>) => void;
-}
-
-interface Student {
-  id: string;
-  name: string;
-  stars: number;
-  accuracy: string;
-  status: string;
-  difficultGesture: string;
-}
-
-interface Classroom {
-  id: string;
-  name: string;
-  code: string;
-  count: number;
-  students: Student[];
+  classes: Classroom[];
+  setClasses: React.Dispatch<React.SetStateAction<Classroom[]>>;
 }
 
 interface QuizAssignment {
@@ -56,32 +41,11 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   activeTab,
   setActiveTab,
   user,
-  onUpdateProfile
+  onUpdateProfile,
+  classes,
+  setClasses
 }) => {
-  // --- LMS STATE DATABASE ---
-  const [classes, setClasses] = useState<Classroom[]>([
-    { 
-      id: 'c1', 
-      name: 'Kelas Inklusi 3-A', 
-      code: 'INK3A', 
-      count: 3,
-      students: [
-        { id: '1', name: 'Anya Forger', stars: 138, accuracy: '87%', status: 'Belajar Kata Kerja', difficultGesture: 'Belajar (Deviasi siku)' },
-        { id: '2', name: 'Budi Saputra', stars: 124, accuracy: '91%', status: 'Belajar Anggota Keluarga', difficultGesture: 'Tolong (Jarak tangan)' },
-        { id: '3', name: 'Kiko Kelinci', stars: 195, accuracy: '95%', status: 'Lulus Semua Tugas', difficultGesture: 'Rumah (Kecepatan rilis)' }
-      ]
-    },
-    { 
-      id: 'c2', 
-      name: 'Kelas Khusus SIBI', 
-      code: 'SIBI1', 
-      count: 2,
-      students: [
-        { id: '4', name: 'Lulu Beruang', stars: 85, accuracy: '82%', status: 'Belajar Angka', difficultGesture: 'Satu (Sudut jari)' },
-        { id: '5', name: 'Roni Rubah', stars: 92, accuracy: '89%', status: 'Belajar Kata Sifat', difficultGesture: 'Makan (Tinggi lengan)' }
-      ]
-    }
-  ]);
+
 
   const [assignedQuizzes, setAssignedQuizzes] = useState<QuizAssignment[]>([
     { id: 'q1', word: 'Terima Kasih', targetAccuracy: 85, difficulty: 'Adaptif AI', assignedDate: '30 Mei 2026', status: 'Aktif' },
@@ -104,8 +68,13 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
 
   // Form states for quiz assignment
   const [quizWord, setQuizWord] = useState('Belajar');
-  const [quizDifficulty, setQuizDifficulty] = useState('Adaptif AI');
   const [quizAccuracy, setQuizAccuracy] = useState(85);
+
+  // Form states for student registration
+  const [activeClassIdForAddStudent, setActiveClassIdForAddStudent] = useState<string | null>(null);
+  const [regStudentName, setRegStudentName] = useState('');
+  const [regStudentDisability, setRegStudentDisability] = useState('Tunarungu');
+  const [regStudentCode, setRegStudentCode] = useState('');
 
   // Form states for teacher profile
   const [teacherName, setTeacherName] = useState(user.nickname || 'Anya');
@@ -144,20 +113,53 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     triggerToast(`🎉 Kelas "${newClass.name}" berhasil dibuat dengan Kode: ${randomCode}!`);
   };
 
-  // Add mock student helper
-  const handleAddMockStudent = (classId: string) => {
-    const mockNames = ['Joni Setiawan', 'Siti Aminah', 'Rudi Tabuti', 'Asep Surasep'];
-    const randomName = mockNames[Math.floor(Math.random() * mockNames.length)];
-    const randomStars = Math.floor(40 + Math.random() * 150);
-    const randomAcc = Math.floor(75 + Math.random() * 20) + '%';
+  const initiateAddStudent = (classroom: Classroom) => {
+    setActiveClassIdForAddStudent(classroom.id);
+    setRegStudentName('');
+    setRegStudentDisability('Tunarungu');
+    
+    // Generate unique code
+    let generatedCode = '';
+    let attempts = 0;
+    while (attempts < 100) {
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      const code = `${classroom.code}-${randomNum}`.toUpperCase();
+      // Check uniqueness
+      const isTaken = classes.some(c => c.students.some(s => s.studentCode.toUpperCase() === code));
+      if (!isTaken) {
+        generatedCode = code;
+        break;
+      }
+      attempts++;
+    }
+    if (!generatedCode) {
+      generatedCode = `${classroom.code}-${Date.now().toString().slice(-3)}`.toUpperCase();
+    }
+    setRegStudentCode(generatedCode);
+  };
+
+  const handleAddStudentSubmit = (e: React.FormEvent, classId: string) => {
+    e.preventDefault();
+    if (!regStudentName.trim() || !regStudentCode.trim()) return;
+
+    const codeUpper = regStudentCode.trim().toUpperCase();
+
+    // Verify uniqueness of student code
+    const isTaken = classes.some(c => c.students.some(s => s.studentCode.toUpperCase() === codeUpper));
+    if (isTaken) {
+      alert("Kode Murid sudah digunakan! Silakan gunakan kode lain.");
+      return;
+    }
 
     const newStudent: Student = {
       id: 's' + Date.now(),
-      name: randomName,
-      stars: randomStars,
-      accuracy: randomAcc,
+      name: regStudentName.trim(),
+      stars: 0,
+      accuracy: '0%',
       status: 'Belajar Kosakata Dasar',
-      difficultGesture: 'Belajar (Posisi siku)'
+      difficultGesture: '-',
+      disabilityType: regStudentDisability,
+      studentCode: codeUpper
     };
 
     setClasses(prev => prev.map(c => {
@@ -171,7 +173,11 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
       return c;
     }));
 
-    triggerToast(`👤 ${randomName} berhasil ditambahkan ke kelas!`);
+    setRegStudentName('');
+    setRegStudentDisability('Tunarungu');
+    setRegStudentCode('');
+    setActiveClassIdForAddStudent(null);
+    triggerToast(`👤 ${newStudent.name} berhasil terdaftar dengan Kode: ${newStudent.studentCode}!`);
   };
 
   // Quiz handler
@@ -181,7 +187,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
       id: 'q' + (assignedQuizzes.length + 1),
       word: quizWord,
       targetAccuracy: quizAccuracy,
-      difficulty: quizDifficulty,
+      difficulty: 'Adaptif AI',
       assignedDate: 'Hari Ini',
       status: 'Aktif'
     };
@@ -501,18 +507,76 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                     </div>
 
                     <button 
-                      onClick={() => handleAddMockStudent(classroom.id)}
+                      onClick={() => {
+                        if (activeClassIdForAddStudent === classroom.id) {
+                          setActiveClassIdForAddStudent(null);
+                        } else {
+                          initiateAddStudent(classroom);
+                        }
+                      }}
                       className="px-4 py-3 rounded-md border-2 border-bisara-accent text-bisara-accent font-extrabold hover:bg-blue-50 text-xs transition-colors"
                     >
-                      + Tambah Murid
+                      {activeClassIdForAddStudent === classroom.id ? 'Batal' : '+ Tambah Murid'}
                     </button>
                   </div>
                 </div>
 
+                {/* Add Student Inline Form */}
+                {activeClassIdForAddStudent === classroom.id && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-6 animate-fadeIn">
+                    <h4 className="font-zain text-2xl font-bold text-bisara-navy mb-4">Pendaftaran Murid Baru</h4>
+                    <form onSubmit={(e) => handleAddStudentSubmit(e, classroom.id)} className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
+                      <div>
+                        <label className="block text-xs font-extrabold text-bisara-navy mb-2">NAMA LENGKAP MURID</label>
+                        <input 
+                          type="text" 
+                          required 
+                          value={regStudentName}
+                          onChange={(e) => setRegStudentName(e.target.value)}
+                          placeholder="Nama murid" 
+                          className="w-full px-4 py-3 border border-slate-200 rounded-md outline-none text-sm font-semibold focus:border-bisara-accent transition-all bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-extrabold text-bisara-navy mb-2">CAKUPAN DISABILITAS</label>
+                        <select 
+                          value={regStudentDisability}
+                          onChange={(e) => setRegStudentDisability(e.target.value)}
+                          className="w-full px-4 py-3 border border-slate-200 rounded-md outline-none text-sm font-semibold bg-white focus:border-bisara-accent transition-all"
+                        >
+                          <option value="Tunarungu">Tunarungu</option>
+                          <option value="Tunanetra">Tunanetra</option>
+                          <option value="Tunagrahita">Tunagrahita</option>
+                          <option value="Non-Disabilitas">Non-Disabilitas</option>
+                        </select>
+                      </div>
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-xs font-extrabold text-bisara-navy mb-2">KODE MURID (LOGIN)</label>
+                          <input 
+                            type="text" 
+                            required 
+                            value={regStudentCode}
+                            onChange={(e) => setRegStudentCode(e.target.value.toUpperCase())}
+                            placeholder="Kode murid" 
+                            className="w-full px-4 py-3 border border-slate-200 rounded-md outline-none text-sm font-bold focus:border-bisara-accent transition-all bg-white font-mono uppercase"
+                          />
+                        </div>
+                        <button 
+                          type="submit" 
+                          className="px-6 py-3 bg-bisara-accent text-white font-extrabold rounded-md shadow-md hover:bg-opacity-95 text-sm transition-all hover:scale-102 active:scale-98"
+                        >
+                          Simpan
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
                 {/* Student list in this class */}
                 {classroom.students.length === 0 ? (
                   <div className="text-center py-8 text-slate-400 font-bold text-sm">
-                    Belum ada murid di kelas ini. Klik tombol "+ Tambah Murid" untuk mensimulasikan gabungnya siswa baru!
+                    Belum ada murid di kelas ini. Klik tombol "+ Tambah Murid" untuk mendaftarkan murid baru!
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -527,9 +591,17 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           <span className="text-[11px] font-bold text-slate-400 block">{student.status}</span>
                         </div>
                         
-                        <div className="flex justify-between items-center border-t border-slate-100 pt-3 mt-4">
-                          <span className="text-xs text-bisara-orange font-bold">🌟 {student.stars} Bintang</span>
-                          <span className="text-[10px] bg-amber-50 text-bisara-orange font-extrabold px-2 py-0.5 rounded">SIBI Aktif</span>
+                        <div className="flex flex-col gap-2 mt-4 border-t border-slate-100 pt-3">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="text-bisara-orange font-bold">🌟 {student.stars} Bintang</span>
+                            <span className="px-2 py-0.5 bg-violet-100 text-bisara-purple-accent font-black rounded text-[10px] uppercase">
+                              {student.disabilityType || 'Tunarungu'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center bg-slate-50 border border-slate-200 rounded p-2 text-xs">
+                            <span className="text-slate-400 font-extrabold">KODE LOGIN:</span>
+                            <span className="font-mono font-black text-bisara-navy tracking-wider">{student.studentCode}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -711,7 +783,6 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                   <thead>
                     <tr className="border-b border-slate-200 text-xs font-extrabold text-slate-400">
                       <th className="pb-3">KATA KUNCI</th>
-                      <th className="pb-3 text-center">TINGKAT LEVEL</th>
                       <th className="pb-3 text-center">TARGET LULUS</th>
                       <th className="pb-3 text-center">STATUS</th>
                       <th className="pb-3 text-right">AKSI</th>
@@ -724,17 +795,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           <span className="text-base">📝</span>
                           "{quiz.word}"
                         </td>
-                        <td className="py-4 text-center">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-black ${
-                            quiz.difficulty === 'Adaptif AI' 
-                              ? 'bg-purple-100 text-bisara-purple-accent border border-purple-200' 
-                              : quiz.difficulty === 'Sedang' 
-                                ? 'bg-amber-100 text-bisara-orange' 
-                                : 'bg-blue-100 text-bisara-accent'
-                          }`}>
-                            {quiz.difficulty}
-                          </span>
-                        </td>
+
                         <td className="py-4 text-center font-extrabold text-slate-500">{quiz.targetAccuracy}% Acc</td>
                         <td className="py-4 text-center">
                           <span className={`w-2.5 h-2.5 rounded-full inline-block ${
@@ -790,25 +851,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-extrabold text-bisara-navy mb-2">TINGKAT KESULITAN (AI MODE)</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {['Mudah', 'Sedang', 'Sulit', 'Adaptif AI'].map(diff => (
-                      <button
-                        key={diff}
-                        type="button"
-                        onClick={() => setQuizDifficulty(diff)}
-                        className={`py-2 px-3 border rounded text-xs font-extrabold transition-colors ${
-                          quizDifficulty === diff 
-                            ? 'bg-bisara-accent text-white border-bisara-accent shadow' 
-                            : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
-                        }`}
-                      >
-                        {diff}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+
 
                 <div>
                   <div className="flex justify-between items-center mb-2">

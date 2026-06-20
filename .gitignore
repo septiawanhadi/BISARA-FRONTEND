@@ -9,3 +9,6 @@ Thumbs.db
 
 .vercel
 .env*.local
+
+# Decoupled backend server folder
+bisara-server/

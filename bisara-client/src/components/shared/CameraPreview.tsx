@@ -4,11 +4,13 @@ import { InferenceSocketService } from '../../lib/api';
 interface CameraPreviewProps {
   isQuizMode?: boolean;
   onAccuracyUpdate?: (acc: number) => void;
+  gestureKey?: string;
 }
 
 export const CameraPreview: React.FC<CameraPreviewProps> = ({ 
   isQuizMode = false,
-  onAccuracyUpdate
+  onAccuracyUpdate,
+  gestureKey = 'sandbox'
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -101,8 +103,8 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
     canvas.width = canvas.parentElement?.clientWidth || 640;
     canvas.height = canvas.parentElement?.clientHeight || 480;
 
-    // Connect to mock/real WebSocket AI Inference Server as defined in Section 5
-    const socket = new InferenceSocketService(isQuizMode ? 'quiz' : 'sandbox');
+    // Connect to WebSocket AI Inference Server
+    const socket = new InferenceSocketService(isQuizMode ? 'quiz' : gestureKey);
     socket.onStatusChange((status, latency) => {
       setStatusText(status);
       if (latency) {
@@ -111,7 +113,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       }
     });
     socket.onResult((res) => {
-      if (isQuizMode && onAccuracyUpdate) {
+      if (onAccuracyUpdate) {
         onAccuracyUpdate(res.accuracy);
       }
       setMetricsText(`Akurasi: ${res.accuracy}% | Conf: ${res.confidence.toFixed(2)}`);
@@ -237,25 +239,19 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
         }, 2000);
       }
 
-      // --- PUSH SEQUENCE TO SOCKET (Every 30 frames / 1s) ---
-      if (frameCount % 30 === 0 && socketRef.current) {
-        const simulatedLandmarks = [
-          { x: leftWristX / canvas.width, y: leftWristY / canvas.height, z: 0 },
-          { x: rightWristX / canvas.width, y: rightWristY / canvas.height, z: 0 }
-        ];
-        socketRef.current.sendJointLandmarks(simulatedLandmarks);
-
-        // Fallback update metrics when server matches
-        if (!highLatency) {
-          const acc = Math.floor(75 + Math.sin(frameCount) * 15);
-          const conf = (0.75 + Math.sin(frameCount) * 0.15).toFixed(2);
-          if (isQuizMode && onAccuracyUpdate) {
-            onAccuracyUpdate(acc);
-            setMetricsText(`Akurasi: ${acc}%`);
-          } else {
-            setStatusText("Status: Mendeteksi...");
-            setMetricsText(`Akurasi: ${acc}% | Conf: ${conf} | Latency: 12ms`);
-          }
+      // --- STREAM WEBCAM FRAME TO WEBSOCKET AI SERVER (Every 6 frames ~5 FPS for optimal CPU & network) ---
+      if (frameCount % 6 === 0 && socketRef.current && videoRef.current && videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 320;
+        tempCanvas.height = 240;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (tempCtx) {
+          // Draw video flipped horizontally to match mirror preview
+          tempCtx.translate(tempCanvas.width, 0);
+          tempCtx.scale(-1, 1);
+          tempCtx.drawImage(videoRef.current, 0, 0, tempCanvas.width, tempCanvas.height);
+          
+          socketRef.current.sendFrame(tempCanvas);
         }
       }
 

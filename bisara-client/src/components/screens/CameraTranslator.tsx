@@ -87,7 +87,7 @@ export const CameraTranslator: React.FC<CameraTranslatorProps> = ({
 
         {/* Camera Sandbox Preview column */}
         <div className="flex flex-col items-center">
-          <CameraPreview isQuizMode={false} />
+          <CameraPreview isQuizMode={false} gestureKey={selectedGesture.clip} />
         </div>
       </div>
     </div>

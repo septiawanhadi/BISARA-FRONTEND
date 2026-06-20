@@ -5,18 +5,11 @@ import { CameraTranslator } from './components/screens/CameraTranslator';
 import { VoiceTranslator } from './components/screens/VoiceTranslator';
 import { Quiz } from './components/screens/Quiz';
 import { TeacherDashboard } from './components/screens/TeacherDashboard';
-import type { UserProfile, DictionaryItem, QuizRound, AvatarConfig } from './types';
-import { Bell } from 'lucide-react';
+import type { UserProfile, DictionaryItem, QuizRound, AvatarConfig, Student, Classroom } from './types';
+import { Bell, Home as HomeIcon, BookOpen, Camera, Mic, Award, Users, TrendingUp, Sliders, User } from 'lucide-react';
 
 // Static assets configurations inside App.tsx
 const initialDictionary: DictionaryItem[] = [
-  { key: "halo-apa-kabar", word: "Halo, apa kabar?", category: "kalimat", clip: "halo", description: "Lambaikan tangan kanan Anda di depan bahu kanan secara santai dari kiri ke kanan.", learned: true, icon: "👋" },
-  { key: "siapa-nama-kamu", word: "Siapa nama kamu?", category: "kalimat", clip: "nama", description: "Arahkan jari telunjuk Anda ke arah lawan bicara, lalu silangkan jari telunjuk dan jari tengah membentuk huruf N.", learned: true, icon: "👤" },
-  { key: "boleh-minta-tolong", word: "Boleh minta tolong?", category: "kalimat", clip: "tolong", description: "Satukan kedua telapak tangan Anda di depan dada lalu gerakkan perlahan ke bawah searah ulu hati.", learned: false, icon: "🤝" },
-  { key: "aku-mau-makan", word: "Aku mau makan", category: "kalimat", clip: "makan", description: "Bentuk tangan kanan menguncup, sentuh ujung-ujung jari ke mulut beberapa kali berturut-turut.", learned: false, icon: "🍚" },
-  { key: "terima-kasih-bantuan", word: "Terima kasih atas bantuannya!", category: "kalimat", clip: "terima-kasih", description: "Letakkan ujung jari tangan kanan di dagu, gerakkan tangan melengkung ke depan dan ke bawah.", learned: true, icon: "❤️" },
-  { key: "ada-apa-dengan-dia", word: "Ada apa dengan dia?", category: "kalimat", clip: "tanya", description: "Arahkan tangan kanan dengan telapak menghadap ke atas, lalu gerakkan sedikit ke atas dan bawah dengan ekspresi bingung.", learned: false, icon: "❓" },
-  
   { key: "makan", word: "Makan", category: "kata", clip: "makan", description: "Bentuk ujung-ujung jari tangan kanan menyatu lalu arahkan mendekati mulut berulang kali.", learned: false, icon: "🍽️" },
   { key: "minum", word: "Minum", category: "kata", clip: "minum", description: "Bentuk genggaman tangan kanan seperti memegang gelas, lalu gerakkan ibu jari mengarah ke mulut seolah menenggak cairan.", learned: false, icon: "🥤" },
   { key: "tolong", word: "Tolong", category: "kata", clip: "tolong", description: "Katupkan kedua telapak tangan di depan dada seakan memohon bantuan dengan santun.", learned: true, icon: "🙏" },
@@ -72,7 +65,7 @@ const quizRounds: QuizRound[] = [
 ];
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<string>('login'); // login, register, role, avatar, home, dictionary, camera-translator, voice-translator, quiz
+  const [currentView, setCurrentView] = useState<string>('role'); // login, register, role, avatar, home, dictionary, camera-translator, voice-translator, quiz
   const [user, setUser] = useState<UserProfile>({
     username: "Anya",
     role: "student",
@@ -89,16 +82,99 @@ export default function App() {
   const [selectedGesture, setSelectedGesture] = useState<DictionaryItem>(initialDictionary[9]); // default Terima Kasih
   const [showConfetti, setShowConfetti] = useState(false);
   const [teacherActiveTab, setTeacherActiveTab] = useState<string>('dasbor');
+  const [classes, setClasses] = useState<Classroom[]>([
+    { 
+      id: 'c1', 
+      name: 'Kelas Inklusi 3-A', 
+      code: 'INK3A', 
+      count: 3,
+      students: [
+        { id: '1', name: 'Anya Forger', stars: 138, accuracy: '87%', status: 'Belajar Kata Kerja', difficultGesture: 'Belajar (Deviasi siku)', disabilityType: 'Tunarungu', studentCode: 'ANYA1' },
+        { id: '2', name: 'Budi Saputra', stars: 124, accuracy: '91%', status: 'Belajar Anggota Keluarga', difficultGesture: 'Tolong (Jarak tangan)', disabilityType: 'Tunarungu', studentCode: 'BUDI2' },
+        { id: '3', name: 'Kiko Kelinci', stars: 195, accuracy: '95%', status: 'Lulus Semua Tugas', difficultGesture: 'Rumah (Kecepatan rilis)', disabilityType: 'Non-Disabilitas', studentCode: 'KIKO3' }
+      ]
+    },
+    { 
+      id: 'c2', 
+      name: 'Kelas Khusus SIBI', 
+      code: 'SIBI1', 
+      count: 2,
+      students: [
+        { id: '4', name: 'Lulu Beruang', stars: 85, accuracy: '82%', status: 'Belajar Angka', difficultGesture: 'Satu (Sudut jari)', disabilityType: 'Tunarungu', studentCode: 'LULU4' },
+        { id: '5', name: 'Roni Rubah', stars: 92, accuracy: '89%', status: 'Belajar Kata Sifat', difficultGesture: 'Makan (Tinggi lengan)', disabilityType: 'Non-Disabilitas', studentCode: 'RONI5' }
+      ]
+    }
+  ]);
+
 
   // Authentication Flow Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setCurrentView('role');
+    const formEl = e.currentTarget as HTMLFormElement;
+
+    if (user.role === 'student') {
+      const codeInput = (formEl.querySelector('input[name="studentCode"]') as HTMLInputElement)?.value.trim();
+      if (!codeInput) {
+        alert("Harap masukkan Kode Murid!");
+        return;
+      }
+
+      // Search classes for matching student code
+      let foundStudent: Student | null = null;
+      for (const c of classes) {
+        const match = c.students.find(s => s.studentCode.toUpperCase() === codeInput.toUpperCase());
+        if (match) {
+          foundStudent = match;
+          break;
+        }
+      }
+
+      if (!foundStudent) {
+        alert("Kode Murid tidak terdaftar! Silakan hubungi guru Anda.");
+        return;
+      }
+
+      setUser({
+        username: foundStudent.studentCode,
+        role: 'student',
+        nickname: foundStudent.name,
+        gender: 'female',
+        avatarId: 'timi',
+        stars: foundStudent.stars,
+        progress: parseInt(foundStudent.accuracy) || 38,
+        quizCount: 1,
+      });
+
+      setCurrentView('home');
+    } else {
+      const emailField = formEl.querySelector('input[name="email"]') as HTMLInputElement;
+      const emailVal = emailField?.value || 'Anya@bisara.com';
+      const derivedUsername = emailVal.split('@')[0];
+
+      setUser(prev => ({
+        ...prev,
+        username: derivedUsername,
+        nickname: prev.role === 'student' ? prev.nickname : derivedUsername,
+        role: prev.role === 'teacher' ? 'Guru' : prev.role
+      }));
+
+      setCurrentView('home');
+    }
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setCurrentView('role');
+    const formEl = e.currentTarget as HTMLFormElement;
+    const emailField = formEl.querySelector('input[type="email"]') as HTMLInputElement;
+    const emailVal = emailField?.value || 'Anya@bisara.com';
+    const derivedUsername = emailVal.split('@')[0];
+
+    setUser(prev => ({
+      ...prev,
+      username: derivedUsername,
+      nickname: derivedUsername
+    }));
+    setCurrentView('login');
   };
 
   const handleRoleSelect = (role: string) => {
@@ -107,10 +183,9 @@ export default function App() {
 
   const proceedFromRole = () => {
     if (user.role === 'student') {
-      setCurrentView('avatar');
+      setCurrentView('student-warning');
     } else {
-      setUser(prev => ({ ...prev, role: 'Guru' }));
-      setCurrentView('home');
+      setCurrentView('register');
     }
   };
 
@@ -203,7 +278,7 @@ export default function App() {
           </div>
 
           {user.role === 'Guru' ? (
-            <nav className="flex gap-7 h-full">
+            <nav className="hidden md:flex gap-7 h-full">
               <button 
                 onClick={() => setTeacherActiveTab('dasbor')} 
                 className={`flex items-center text-base font-bold h-full relative transition-colors ${
@@ -246,7 +321,7 @@ export default function App() {
               </button>
             </nav>
           ) : (
-            <nav className="flex gap-7 h-full">
+            <nav className="hidden md:flex gap-7 h-full">
               <button 
                 onClick={() => setCurrentView('home')} 
                 className={`flex items-center text-base font-bold h-full relative transition-colors ${
@@ -292,7 +367,7 @@ export default function App() {
 
           <div className="flex items-center gap-6">
             {/* Server heartbeat badge */}
-            <span className="bg-cyan-100 bg-opacity-40 text-[#0891B2] font-black px-3.5 py-1.5 rounded-full text-xs flex items-center gap-1.5">
+            <span className="bg-cyan-100 bg-opacity-40 text-[#0891B2] font-black px-3.5 py-1.5 rounded-full text-xs hidden sm:flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-bisara-cyan inline-block"></span>
               Server Latency: 12ms
             </span>
@@ -312,7 +387,7 @@ export default function App() {
               }}
               className="flex items-center gap-3 cursor-pointer p-1.5 rounded-md hover:bg-slate-100 transition-colors"
             >
-              <div className="text-right">
+              <div className="text-right hidden sm:block">
                 <div className="text-sm font-extrabold text-bisara-navy leading-none">{user.nickname}</div>
                 <div className="text-[11px] text-slate-400 font-bold mt-0.5">{user.username} ({user.role === 'student' ? 'Murid' : 'Guru'})</div>
               </div>
@@ -326,7 +401,7 @@ export default function App() {
       )}
 
       {/* ==================== CORE SCREENS VIEWSTACK ROUTER ==================== */}
-      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 py-10 flex">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-4 md:px-6 py-6 md:py-10 pb-24 md:pb-10 flex">
         
         {/* LOGIN SCREEN */}
         {currentView === 'login' && (
@@ -346,46 +421,74 @@ export default function App() {
                 <p className="text-slate-400 font-semibold text-sm mb-6">Masuk untuk memulai petualangan belajarmu!</p>
 
                 <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
-                  <div>
-                    <label className="block text-sm font-extrabold text-bisara-navy mb-2">Username</label>
-                    <input 
-                      type="text" 
-                      required 
-                      defaultValue="Anya"
-                      onChange={(e) => setUser(prev => ({ ...prev, nickname: e.target.value, username: e.target.value }))}
-                      placeholder="Masukkan Username Disini" 
-                      className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-extrabold text-bisara-navy mb-2">Password</label>
-                    <input 
-                      type="password" 
-                      required 
-                      defaultValue="123456"
-                      placeholder="Masukkan Password Disini" 
-                      className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
-                    />
-                  </div>
+                  {user.role === 'student' ? (
+                    <div>
+                      <label className="block text-sm font-extrabold text-bisara-navy mb-2">Kode Murid</label>
+                      <input 
+                        type="text" 
+                        name="studentCode"
+                        required 
+                        placeholder="Contoh: ANYA1" 
+                        className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all uppercase"
+                      />
+                      <p className="text-xs text-slate-400 font-bold mt-2 leading-relaxed">
+                        *Kode Murid didaftarkan oleh Guru Anda. Masukkan kode tersebut untuk masuk secara instan.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-sm font-extrabold text-bisara-navy mb-2">Email</label>
+                        <input 
+                          type="email" 
+                          name="email"
+                          required 
+                          defaultValue="Anya@bisara.com"
+                          placeholder="Masukkan Email Disini" 
+                          className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-extrabold text-bisara-navy mb-2">Password</label>
+                        <input 
+                          type="password" 
+                          name="password"
+                          required 
+                          defaultValue="123456"
+                          placeholder="Masukkan Password Disini" 
+                          className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
+                        />
+                      </div>
+                    </>
+                  )}
 
                   <div className="flex justify-between items-center text-sm font-bold mt-2">
                     <label className="flex items-center gap-2 cursor-pointer select-none">
                       <input type="checkbox" defaultChecked className="w-4 h-4 rounded text-bisara-accent" />
                       Ingat Saya
                     </label>
-                    <a href="#" className="text-bisara-accent font-extrabold hover:opacity-85">Lupa Password</a>
+                    {user.role !== 'student' && (
+                      <a href="#" className="text-bisara-accent font-extrabold hover:opacity-85">Lupa Password</a>
+                    )}
                   </div>
 
                   <button 
                     type="submit"
                     className="w-full py-4 mt-4 bg-bisara-accent hover:bg-opacity-95 text-white font-extrabold rounded-full shadow-[0_8px_25px_rgba(37,99,255,0.25)] hover:scale-102 active:scale-95 transition-transform"
                   >
-                    Login
+                    Masuk Aplikasi
                   </button>
                 </form>
 
-                <div className="text-center text-sm font-semibold text-slate-400 mt-6">
-                  Belum punya akun? <button onClick={() => setCurrentView('register')} className="text-bisara-accent font-extrabold hover:underline">Daftar Akun Baru</button>
+                <div className="text-center text-sm font-semibold text-slate-400 mt-6 flex flex-col gap-3">
+                  {user.role !== 'student' ? (
+                    <div>
+                      Belum punya akun? <button onClick={() => setCurrentView('register')} className="text-bisara-accent font-extrabold hover:underline">Daftar Akun Baru</button>
+                    </div>
+                  ) : null}
+                  <div>
+                    <button onClick={() => setCurrentView('role')} className="text-bisara-navy font-black hover:underline">← Kembali Pilih Role</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -416,16 +519,6 @@ export default function App() {
                       type="email" 
                       required 
                       placeholder="Masukkan Email Disini" 
-                      className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-extrabold text-bisara-navy mb-2">Username</label>
-                    <input 
-                      type="text" 
-                      required 
-                      onChange={(e) => setUser(prev => ({ ...prev, nickname: e.target.value, username: e.target.value }))}
-                      placeholder="Masukkan Username Disini" 
                       className="w-full px-5 py-4 border border-slate-200 rounded-md outline-none text-base font-nunito focus:border-bisara-accent focus:ring-4 focus:ring-blue-100 transition-all"
                     />
                   </div>
@@ -479,33 +572,33 @@ export default function App() {
                 <h1 className="font-zain text-5xl font-black text-bisara-navy mb-2">Pilih Role</h1>
                 <p className="text-slate-400 font-semibold text-sm mb-6">Pilih bagaimana kamu ingin berinteraksi di BISARA</p>
 
-                <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
                   <div 
                     onClick={() => handleRoleSelect('student')}
-                    className={`border-2 rounded-lg p-6 text-center cursor-pointer relative overflow-hidden transition-all hover:scale-102 ${
+                    className={`border-2 rounded-lg p-4 sm:p-6 text-center cursor-pointer relative overflow-hidden transition-all hover:scale-102 ${
                       user.role === 'student' ? 'border-bisara-accent bg-blue-50 bg-opacity-20 shadow-md' : 'border-slate-200'
                     }`}
                   >
                     {user.role === 'student' && <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-bisara-accent text-white flex items-center justify-center text-xs font-bold">✓</div>}
-                    <div className="w-full h-32 bg-blue-50 text-bisara-accent rounded-md flex items-center justify-center mb-4">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    <div className="w-full h-20 sm:h-32 bg-blue-50 text-bisara-accent rounded-md flex items-center justify-center mb-3 sm:mb-4">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10 sm:w-12 sm:h-12"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     </div>
                     <h3 className="font-zain text-2xl font-extrabold text-bisara-navy mb-1">Murid</h3>
-                    <p className="text-[10px] text-slate-400 font-bold leading-normal">Belajar SIBI interaktif, selesaikan kuis, dan kumpulkan bintang!</p>
+                    <p className="text-[11px] sm:text-[10px] text-slate-400 font-bold leading-normal">Belajar SIBI interaktif, selesaikan kuis, dan kumpulkan bintang!</p>
                   </div>
 
                   <div 
                     onClick={() => handleRoleSelect('teacher')}
-                    className={`border-2 rounded-lg p-6 text-center cursor-pointer relative overflow-hidden transition-all hover:scale-102 ${
+                    className={`border-2 rounded-lg p-4 sm:p-6 text-center cursor-pointer relative overflow-hidden transition-all hover:scale-102 ${
                       user.role === 'teacher' ? 'border-bisara-accent bg-blue-50 bg-opacity-20 shadow-md' : 'border-slate-200'
                     }`}
                   >
                     {user.role === 'teacher' && <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-bisara-accent text-white flex items-center justify-center text-xs font-bold">✓</div>}
-                    <div className="w-full h-32 bg-violet-50 text-bisara-accent-muted rounded-md flex items-center justify-center mb-4">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <div className="w-full h-20 sm:h-32 bg-violet-50 text-bisara-accent-muted rounded-md flex items-center justify-center mb-3 sm:mb-4">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10 sm:w-12 sm:h-12"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     </div>
                     <h3 className="font-zain text-2xl font-extrabold text-bisara-navy mb-1">Guru</h3>
-                    <p className="text-[10px] text-slate-400 font-bold leading-normal">Buat tugas kuis, pantau performa akurasi isyarat, dan atur materi.</p>
+                    <p className="text-[11px] sm:text-[10px] text-slate-400 font-bold leading-normal">Buat tugas kuis, pantau performa akurasi isyarat, dan atur materi.</p>
                   </div>
                 </div>
 
@@ -519,6 +612,50 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {/* STUDENT COMPANION WARNING SCREEN */}
+        {currentView === 'student-warning' && (
+          <div className="flex w-full min-h-[calc(100vh-80px)] bg-bisara-bg">
+            <div className="hidden md:flex md:w-[35%] bg-bisara-yellow relative overflow-hidden items-center justify-center rounded-r-[40%_70%] shadow-lg">
+              <div className="text-center p-10 z-10">
+                <div className="max-w-[250px] mx-auto mb-6">
+                  <img src="/Logo%20Sementara%20Kali.png" alt="Bisara Logo" className="w-full h-auto object-contain" />
+                </div>
+                <p className="font-bold text-bisara-navy text-base">Rekomendasi Belajar Inklusi</p>
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center px-[5%] md:px-[10%]">
+              <div className="max-w-[500px] w-full mx-auto bg-white p-8 rounded-lg shadow-md border border-slate-100 text-center flex flex-col items-center">
+                <div className="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl animate-bounce mb-6">
+                  ⚠️
+                </div>
+                <h2 className="font-zain text-4xl font-extrabold text-bisara-navy mb-3">
+                  Pemberitahuan Pendampingan
+                </h2>
+                <p className="text-base font-bold text-slate-500 leading-relaxed font-nunito mb-8 max-w-[320px]">
+                  Lakukan pembelajaran dengan pendamping seperti guru atau pun wali murid.
+                </p>
+
+                <div className="w-full flex flex-col gap-3">
+                  <button 
+                    onClick={() => setCurrentView(user.role === 'student' ? 'login' : 'register')}
+                    className="w-full py-4 bg-bisara-accent hover:bg-opacity-95 text-white font-extrabold rounded-full shadow-[0_8px_25px_rgba(37,99,255,0.25)] hover:scale-102 active:scale-95 transition-transform"
+                  >
+                    {user.role === 'student' ? 'Saya Mengerti, Masuk Aplikasi' : 'Saya Mengerti, Lanjut Daftar'}
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView('role')}
+                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold rounded-full hover:scale-102 active:scale-95 transition-transform"
+                  >
+                    Kembali
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* CHOOSE AVATAR SCREEN */}
         {currentView === 'avatar' && (
@@ -622,6 +759,8 @@ export default function App() {
               setActiveTab={setTeacherActiveTab} 
               user={user}
               onUpdateProfile={(updatedFields) => setUser(prev => ({ ...prev, ...updatedFields }))}
+              classes={classes}
+              setClasses={setClasses}
             />
           ) : (
             <Home user={user} onNavigate={setCurrentView} />
@@ -668,6 +807,109 @@ export default function App() {
         )}
 
       </main>
+
+      {/* ==================== MOBILE BOTTOM NAVIGATION BAR ==================== */}
+      {['home', 'dictionary', 'camera-translator', 'voice-translator', 'quiz'].includes(currentView) && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 z-[100] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex items-center justify-around pb-safe">
+          {user.role === 'Guru' ? (
+            <>
+              <button 
+                onClick={() => setTeacherActiveTab('dasbor')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  teacherActiveTab === 'dasbor' ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <HomeIcon size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Dasbor</span>
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('kelas')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  teacherActiveTab === 'kelas' ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Users size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Kelas</span>
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('progress')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  teacherActiveTab === 'progress' ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <TrendingUp size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Progres</span>
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('quiz-manager')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  teacherActiveTab === 'quiz-manager' ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Sliders size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Kuis</span>
+              </button>
+              <button 
+                onClick={() => setTeacherActiveTab('profil')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  teacherActiveTab === 'profil' ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <User size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Profil</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => setCurrentView('home')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  isNavActive('home') ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <HomeIcon size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Beranda</span>
+              </button>
+              <button 
+                onClick={() => setCurrentView('dictionary')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  isNavActive('dictionary') ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <BookOpen size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Kosakata</span>
+              </button>
+              <button 
+                onClick={() => setCurrentView('camera-translator')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  isNavActive('camera-translator') ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Camera size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Camera</span>
+              </button>
+              <button 
+                onClick={() => setCurrentView('voice-translator')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  isNavActive('voice-translator') ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Mic size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Voice</span>
+              </button>
+              <button 
+                onClick={() => setCurrentView('quiz')} 
+                className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                  isNavActive('quiz') ? 'text-bisara-accent-muted scale-105' : 'text-bisara-navy opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Award size={20} strokeWidth={2.5} />
+                <span className="text-[10px] font-black mt-1 font-nunito leading-none">Tugas</span>
+              </button>
+            </>
+          )}
+        </nav>
+      )}
     </div>
   );
 }

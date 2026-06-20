@@ -32,3 +32,23 @@ export interface AvatarConfig {
   starsNeeded?: number;
   svg: string;
 }
+
+export interface Student {
+  id: string;
+  name: string;
+  stars: number;
+  accuracy: string;
+  status: string;
+  difficultGesture: string;
+  disabilityType: string;
+  studentCode: string;
+}
+
+export interface Classroom {
+  id: string;
+  name: string;
+  code: string;
+  count: number;
+  students: Student[];
+}
+

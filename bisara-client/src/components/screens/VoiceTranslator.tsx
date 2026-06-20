@@ -24,6 +24,11 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
   const [activeClip, setActiveClip] = useState<string | null>(null);
   const [frameIndex, setFrameIndex] = useState(0);
   const [timerText, setTimerText] = useState('00:00');
+  
+  // Spelling fallback states
+  const [activeLetter, setActiveLetter] = useState<string | null>(null);
+  const [spelledWord, setSpelledWord] = useState<string | null>(null);
+  const [spelledIndex, setSpelledIndex] = useState<number>(0);
 
   const recognitionRef = useRef<any>(null);
   const animationTimerRef = useRef<number | null>(null);
@@ -54,7 +59,13 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
 
       rec.onerror = (event: any) => {
         console.error("Speech Recognition Error:", event.error);
-        setTranscript('Maaf, suara kurang terdengar jelas. Ketuk ikon mic dan coba lagi.');
+        if (event.error === 'network') {
+          setTranscript('Gagal terhubung ke server suara browser (Network Error). Jika Anda menggunakan Brave, Opera, atau Vivaldi, browser tersebut memblokir server suara Google secara default. Harap gunakan browser Google Chrome / Safari resmi, atau Anda bisa menggunakan kolom pencarian teks di atas untuk menuliskan kata/kalimat.');
+        } else if (event.error === 'not-allowed') {
+          setTranscript('Izin akses mikrofon ditolak. Silakan aktifkan izin mikrofon pada ikon gembok di sebelah kiri alamat web browser Anda.');
+        } else {
+          setTranscript('Maaf, suara kurang terdengar jelas atau mikrofon bermasalah. Ketuk ikon mic dan coba lagi.');
+        }
         stopRecordingState();
       };
 
@@ -111,9 +122,7 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
         setStatusBadge(`Mendeteksi: ${res.word} (${Math.round((res.confidence || 1) * 100)}%)`);
         playAvatarGesture(res.clip);
       } else {
-        setStatusBadge("Gagal Mengartikan");
-        setTranscript(`Maaf, kata kunci untuk "${phrase}" belum tersedia. Coba ucapkan "Makan", "Minum", "Tolong", atau "Terima Kasih".`);
-        playAvatarGesture("scratch_head");
+        spellOutWord(phrase);
       }
     } catch (e) {
       console.error(e);
@@ -123,14 +132,60 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
         setStatusBadge(`Mendeteksi (Lokal): ${matched.word}`);
         playAvatarGesture(matched.clip);
       } else {
-        setStatusBadge("Gagal Mengartikan");
-        setTranscript(`Maaf, kata kunci untuk "${phrase}" belum tersedia. Coba ucapkan "Makan", "Minum", "Tolong", atau "Terima Kasih".`);
-        playAvatarGesture("scratch_head");
+        spellOutWord(phrase);
       }
     }
   };
 
+  const spellOutWord = (word: string) => {
+    const cleanWord = word.replace(/[^a-zA-Z]/g, '').toUpperCase();
+    if (!cleanWord) {
+      setStatusBadge("Gagal Mengartikan");
+      setTranscript(`Maaf, kata kunci untuk "${word}" belum tersedia.`);
+      playAvatarGesture("scratch_head");
+      return;
+    }
+
+    setSpelledWord(cleanWord);
+    setSpelledIndex(0);
+    setActiveLetter(cleanWord[0]);
+    setActiveClip('spell');
+    setTranscript(`Mengeja kata: "${cleanWord}"`);
+    setStatusBadge("Mengeja Huruf");
+
+    if (animationTimerRef.current) clearInterval(animationTimerRef.current);
+    if (durationTimerRef.current) clearInterval(durationTimerRef.current);
+
+    let letterIndex = 0;
+    let frame = 0;
+    const framesPerLetter = 36; // 1.2 seconds at 30 FPS
+
+    animationTimerRef.current = setInterval(() => {
+      frame++;
+      setFrameIndex(frame % framesPerLetter);
+
+      const currentLetterPos = Math.floor(frame / framesPerLetter);
+      if (currentLetterPos !== letterIndex) {
+        letterIndex = currentLetterPos;
+        if (letterIndex >= cleanWord.length) {
+          clearInterval(animationTimerRef.current!);
+          animationTimerRef.current = null;
+          setActiveClip(null);
+          setActiveLetter(null);
+          setSpelledWord(null);
+          setStatusBadge("Siap Menerima");
+          setTranscript(`Selesai mengeja "${cleanWord}"`);
+        } else {
+          setSpelledIndex(letterIndex);
+          setActiveLetter(cleanWord[letterIndex]);
+        }
+      }
+    }, 33) as any;
+  };
+
   const playAvatarGesture = (clipName: string) => {
+    setActiveLetter(null);
+    setSpelledWord(null);
     setActiveClip(clipName);
     setFrameIndex(0);
     startDurationTimer();
@@ -216,12 +271,38 @@ export const VoiceTranslator: React.FC<VoiceTranslatorProps> = ({
 
         {/* Canvas Avatar Column */}
         <div className="bg-white border-2 border-bisara-accent rounded-lg p-6 shadow-md flex flex-col items-center gap-6">
-          <div className="w-full h-[380px] bg-slate-100 rounded-md relative overflow-hidden">
-            <AvatarViewer 
-              avatarId={avatarId} 
-              activeClip={activeClip} 
-              frameIndex={frameIndex} 
-            />
+          <div className="w-full relative">
+            <div className="w-full h-[380px] bg-slate-100 rounded-md relative overflow-hidden">
+              <AvatarViewer 
+                avatarId={avatarId} 
+                activeClip={activeClip} 
+                frameIndex={frameIndex} 
+                activeLetter={activeLetter}
+              />
+            </div>
+
+            {/* Subtitle overlay for spelling */}
+            {activeLetter && (
+              <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white font-black text-6xl px-8 py-3 rounded-2xl shadow-xl z-20 animate-scaleIn select-none font-fredoka">
+                {activeLetter}
+              </div>
+            )}
+            
+            {/* Word spelling progression indicator */}
+            {spelledWord && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 border border-slate-200 px-4 py-2 rounded-full shadow-md z-20 flex gap-1.5 items-center select-none">
+                {spelledWord.split('').map((char, idx) => (
+                  <span 
+                    key={idx} 
+                    className={`text-lg font-black transition-all ${
+                      idx === spelledIndex ? 'text-bisara-accent scale-125 underline' : 'text-slate-400'
+                    }`}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Overlapping Mic floating button */}
             <button 

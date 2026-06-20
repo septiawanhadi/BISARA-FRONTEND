@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 /**
  * BISARA API & WebSocket Service Layer
  * 
@@ -37,12 +39,21 @@ export const ApiService = {
    */
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
-        headers: { 'Content-Type': 'application/json', ...options.headers },
-        ...options,
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (options.headers) {
+        Object.assign(headers, options.headers);
+      }
+
+      const response = await axios({
+        url: `${API_BASE}${endpoint}`,
+        method: (options.method || 'GET') as any,
+        headers,
+        data: options.body ? JSON.parse(options.body as string) : undefined,
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return await response.json() as T;
+
+      return response.data as T;
     } catch (error) {
       console.warn(`[API] Server offline or request failed for ${endpoint}. Using offline mock storage.`);
       return this.mockHandler<T>(endpoint, options);

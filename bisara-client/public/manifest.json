@@ -3,7 +3,7 @@
   "name": "Bisara PWA SIBI Learning Platform",
   "icons": [
     {
-      "src": "vite.svg",
+      "src": "favicon.svg",
       "type": "image/svg+xml",
       "sizes": "any",
       "purpose": "any maskable"
