@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { QuizAssignment, QuizSubmission } from '../types';
 
 /**
  * BISARA API & WebSocket Service Layer
@@ -127,6 +128,110 @@ export const ApiService = {
       }
     }
 
+    if (endpoint.includes('/assignments')) {
+      const stored = localStorage.getItem('bisara_assignments');
+      let quizzes: QuizAssignment[] = stored ? JSON.parse(stored) : [
+        { id: 'q1', classCode: 'INK3A', word: 'Terima Kasih', targetAccuracy: 85, difficulty: 'Adaptif AI', assignedDate: '2 jam yang lalu', status: 'Aktif' },
+        { id: 'q2', classCode: 'INK3A', word: 'Makan', targetAccuracy: 75, difficulty: 'Adaptif AI', assignedDate: '1 hari yang lalu', status: 'Aktif' },
+        { id: 'q3', classCode: 'INK3A', word: 'Belajar', targetAccuracy: 90, difficulty: 'Adaptif AI', assignedDate: '3 hari yang lalu', status: 'Ditutup' }
+      ];
+
+      if (!stored) {
+        localStorage.setItem('bisara_assignments', JSON.stringify(quizzes));
+      }
+
+      if (options.method === 'POST') {
+        const newQuiz: QuizAssignment = {
+          id: 'q' + (quizzes.length + 1),
+          classCode: body.class_code,
+          word: body.word,
+          targetAccuracy: body.target_accuracy,
+          difficulty: body.difficulty || 'Adaptif AI',
+          assignedDate: 'Hari Ini',
+          status: 'Aktif'
+        };
+        quizzes.unshift(newQuiz);
+        localStorage.setItem('bisara_assignments', JSON.stringify(quizzes));
+        return newQuiz as unknown as T;
+      }
+
+      if (options.method === 'PATCH') {
+        const cleanPath = endpoint.split('?')[0];
+        const parts = cleanPath.split('/');
+        const quizId = parts[2];
+        quizzes = quizzes.map(q => {
+          if (q.id === quizId) {
+            return { ...q, status: body.status };
+          }
+          return q;
+        });
+        localStorage.setItem('bisara_assignments', JSON.stringify(quizzes));
+        return { status: 'ok', quiz_id: quizId } as unknown as T;
+      }
+
+      if (options.method === 'DELETE') {
+        const cleanPath = endpoint.split('?')[0];
+        const parts = cleanPath.split('/');
+        const quizId = parts[2];
+        quizzes = quizzes.filter(q => q.id !== quizId);
+        localStorage.setItem('bisara_assignments', JSON.stringify(quizzes));
+        return { status: 'ok', quiz_id: quizId } as unknown as T;
+      }
+
+      // GET method
+      const urlQuery = endpoint.split('?')[1];
+      const params = new URLSearchParams(urlQuery || '');
+      const cCode = params.get('class_code');
+      if (cCode) {
+        return quizzes.filter(q => q.classCode === cCode) as unknown as T;
+      }
+      return quizzes as unknown as T;
+    }
+
+    if (endpoint.includes('/submissions')) {
+      const stored = localStorage.getItem('bisara_submissions');
+      let subs: QuizSubmission[] = stored ? JSON.parse(stored) : [
+        { id: 's1', studentCode: 'ANYA1', quizId: 'q1', word: 'Terima Kasih', bestAccuracy: 95, stars: 3, completedDate: '5 menit yang lalu' }
+      ];
+
+      if (!stored) {
+        localStorage.setItem('bisara_submissions', JSON.stringify(subs));
+      }
+
+      if (options.method === 'POST') {
+        const storedQuizzes = localStorage.getItem('bisara_assignments');
+        const quizzesList: QuizAssignment[] = storedQuizzes ? JSON.parse(storedQuizzes) : [];
+        const relatedQuiz = quizzesList.find(q => q.id === body.quiz_id);
+
+        const newSub: QuizSubmission = {
+          id: 's' + (subs.length + 1),
+          studentCode: body.student_code,
+          quizId: body.quiz_id,
+          word: relatedQuiz ? relatedQuiz.word : 'Kuis Isyarat',
+          bestAccuracy: body.best_accuracy,
+          stars: body.stars,
+          completedDate: 'Baru Saja'
+        };
+        subs.unshift(newSub);
+        localStorage.setItem('bisara_submissions', JSON.stringify(subs));
+        return newSub as unknown as T;
+      }
+
+      // GET method
+      const urlQuery = endpoint.split('?')[1];
+      const params = new URLSearchParams(urlQuery || '');
+      const cCode = params.get('class_code');
+      if (cCode) {
+        const classStudents: Record<string, string[]> = {
+          'INK3A': ['ANYA1', 'BUDI2', 'KIKO3'],
+          'SIBI1': ['LULU4', 'RONI5']
+        };
+        const allowedStudents = classStudents[cCode] || [];
+        return subs.filter(s => allowedStudents.includes(s.studentCode)) as unknown as T;
+      }
+      return subs as unknown as T;
+    }
+
     // Default empty mock objects
     return body as T;
   },
@@ -153,6 +258,43 @@ export const ApiService = {
       method: 'POST',
       body: JSON.stringify({ phrase })
     });
+  },
+
+  async getAssignments(classCode?: string): Promise<QuizAssignment[]> {
+    const endpoint = classCode ? `/assignments?class_code=${classCode}` : '/assignments';
+    return this.request<QuizAssignment[]>(endpoint);
+  },
+
+  async createAssignment(assignment: { class_code: string; word: string; target_accuracy: number; difficulty?: string }): Promise<QuizAssignment> {
+    return this.request<QuizAssignment>('/assignments', {
+      method: 'POST',
+      body: JSON.stringify(assignment)
+    });
+  },
+
+  async updateAssignmentStatus(quizId: string, status: 'Aktif' | 'Ditutup'): Promise<{ status: string; quiz_id: string; new_status: string }> {
+    return this.request<{ status: string; quiz_id: string; new_status: string }>(`/assignments/${quizId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status })
+    });
+  },
+
+  async deleteAssignment(quizId: string): Promise<{ status: string; quiz_id: string }> {
+    return this.request<{ status: string; quiz_id: string }>(`/assignments/${quizId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async submitQuizResult(submission: { student_code: string; quiz_id: string; best_accuracy: number; stars: number }): Promise<QuizSubmission> {
+    return this.request<QuizSubmission>('/submissions', {
+      method: 'POST',
+      body: JSON.stringify(submission)
+    });
+  },
+
+  async getSubmissions(classCode?: string): Promise<QuizSubmission[]> {
+    const endpoint = classCode ? `/submissions?class_code=${classCode}` : '/submissions';
+    return this.request<QuizSubmission[]>(endpoint);
   }
 };
 

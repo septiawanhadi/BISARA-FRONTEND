@@ -52,3 +52,24 @@ export interface Classroom {
   students: Student[];
 }
 
+export interface QuizAssignment {
+  id: string;
+  classCode: string;
+  word: string;
+  targetAccuracy: number;
+  difficulty: string;
+  assignedDate: string;
+  status: 'Aktif' | 'Ditutup';
+}
+
+export interface QuizSubmission {
+  id: string;
+  studentCode: string;
+  quizId: string;
+  word?: string;
+  bestAccuracy: number;
+  stars: number;
+  completedDate: string;
+}
+
+

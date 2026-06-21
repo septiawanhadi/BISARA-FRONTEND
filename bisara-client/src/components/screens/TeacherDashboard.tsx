@@ -17,7 +17,8 @@ import {
   Mail,
   School
 } from 'lucide-react';
-import type { UserProfile, Student, Classroom } from '../../types';
+import type { UserProfile, Student, Classroom, QuizAssignment, QuizSubmission } from '../../types';
+import { ApiService } from '../../lib/api';
 
 interface TeacherDashboardProps {
   activeTab: string;
@@ -26,6 +27,10 @@ interface TeacherDashboardProps {
   onUpdateProfile: (updatedFields: Partial<UserProfile>) => void;
   classes: Classroom[];
   setClasses: React.Dispatch<React.SetStateAction<Classroom[]>>;
+  assignedQuizzes: QuizAssignment[];
+  setAssignedQuizzes: React.Dispatch<React.SetStateAction<QuizAssignment[]>>;
+  quizSubmissions: QuizSubmission[];
+  loadSubmissions: (classCode?: string) => Promise<void>;
 }
 
 interface QuizAssignment {
@@ -43,21 +48,37 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   user,
   onUpdateProfile,
   classes,
-  setClasses
+  setClasses,
+  assignedQuizzes,
+  setAssignedQuizzes,
+  quizSubmissions,
+  loadSubmissions
 }) => {
-
-
-  const [assignedQuizzes, setAssignedQuizzes] = useState<QuizAssignment[]>([
-    { id: 'q1', word: 'Terima Kasih', targetAccuracy: 85, difficulty: 'Adaptif AI', assignedDate: '30 Mei 2026', status: 'Aktif' },
-    { id: 'q2', word: 'Makan', targetAccuracy: 80, difficulty: 'Sedang', assignedDate: '28 Mei 2026', status: 'Aktif' },
-    { id: 'q3', word: 'Tolong', targetAccuracy: 75, difficulty: 'Mudah', assignedDate: '15 Mei 2026', status: 'Ditutup' }
-  ]);
+  const [targetClassCode, setTargetClassCode] = useState(classes[0]?.code || 'INK3A');
 
   const [notifications, setNotifications] = useState([
-    { id: 1, text: 'Anya Forger baru saja mengumpulkan tugas "Kuis Terima Kasih" dengan akurasi 95%!', time: '5 menit yang lalu', unread: true },
     { id: 2, text: 'Siswa baru "Lulu Beruang" bergabung ke Kelas Khusus SIBI.', time: '2 jam yang lalu', unread: true },
     { id: 3, text: 'Server AI Inference mendeteksi lonjakan latensi singkat (12ms) - stabil.', time: '1 hari yang lalu', unread: false }
   ]);
+
+  const submissionNotifications = quizSubmissions.map((s, index) => {
+    let studentName = s.studentCode;
+    for (const c of classes) {
+      const found = c.students.find(st => st.studentCode === s.studentCode);
+      if (found) {
+        studentName = found.name;
+        break;
+      }
+    }
+    return {
+      id: `sub-${s.id}-${index}`,
+      text: `${studentName} baru saja mengumpulkan tugas "Kuis ${s.word}" dengan akurasi ${s.bestAccuracy}% (${s.stars} ⭐)!`,
+      time: s.completedDate,
+      unread: true
+    };
+  });
+
+  const allNotifications = [...submissionNotifications, ...notifications];
 
   const [showToast, setShowToast] = useState<string | null>(null);
 
@@ -181,35 +202,51 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   };
 
   // Quiz handler
-  const handleAssignQuizSubmit = (e: React.FormEvent) => {
+  const handleAssignQuizSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newQuiz: QuizAssignment = {
-      id: 'q' + (assignedQuizzes.length + 1),
-      word: quizWord,
-      targetAccuracy: quizAccuracy,
-      difficulty: 'Adaptif AI',
-      assignedDate: 'Hari Ini',
-      status: 'Aktif'
-    };
-
-    setAssignedQuizzes(prev => [newQuiz, ...prev]);
-    triggerToast(`📝 Tugas kuis baru untuk kata "${quizWord}" telah didistribusikan!`);
+    try {
+      const newQuiz = await ApiService.createAssignment({
+        class_code: targetClassCode,
+        word: quizWord,
+        target_accuracy: quizAccuracy,
+        difficulty: 'Adaptif AI'
+      });
+      setAssignedQuizzes(prev => [newQuiz, ...prev]);
+      triggerToast(`📝 Tugas kuis baru untuk kata "${quizWord}" telah didistribusikan ke kelas ${targetClassCode}!`);
+    } catch (err) {
+      console.error("Failed to assign quiz:", err);
+      triggerToast("Gagal membagikan tugas kuis.");
+    }
   };
 
-  const handleToggleQuizStatus = (id: string) => {
-    setAssignedQuizzes(prev => prev.map(q => {
-      if (q.id === id) {
-        const nextStatus = q.status === 'Aktif' ? 'Ditutup' : 'Aktif';
-        triggerToast(`Kuis "${q.word}" sekarang ${nextStatus}.`);
-        return { ...q, status: nextStatus };
-      }
-      return q;
-    }));
+  const handleToggleQuizStatus = async (id: string) => {
+    const q = assignedQuizzes.find(item => item.id === id);
+    if (!q) return;
+    const nextStatus = q.status === 'Aktif' ? 'Ditutup' : 'Aktif';
+    try {
+      await ApiService.updateAssignmentStatus(id, nextStatus);
+      setAssignedQuizzes(prev => prev.map(item => {
+        if (item.id === id) {
+          return { ...item, status: nextStatus };
+        }
+        return item;
+      }));
+      triggerToast(`Kuis "${q.word}" sekarang ${nextStatus}.`);
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      triggerToast("Gagal mengubah status kuis.");
+    }
   };
 
-  const handleDeleteQuiz = (id: string) => {
-    setAssignedQuizzes(prev => prev.filter(q => q.id !== id));
-    triggerToast('Tugas kuis berhasil dihapus.');
+  const handleDeleteQuiz = async (id: string) => {
+    try {
+      await ApiService.deleteAssignment(id);
+      setAssignedQuizzes(prev => prev.filter(q => q.id !== id));
+      triggerToast('Tugas kuis berhasil dihapus.');
+    } catch (err) {
+      console.error("Failed to delete quiz:", err);
+      triggerToast("Gagal menghapus kuis.");
+    }
   };
 
   // Profile save
@@ -390,7 +427,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto">
-                  {notifications.map(n => (
+                  {allNotifications.map(n => (
                     <div 
                       key={n.id} 
                       className={`p-4 border rounded-md flex flex-col gap-1 transition-colors ${
@@ -783,6 +820,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                   <thead>
                     <tr className="border-b border-slate-200 text-xs font-extrabold text-slate-400">
                       <th className="pb-3">KATA KUNCI</th>
+                      <th className="pb-3 text-center">TARGET KELAS</th>
                       <th className="pb-3 text-center">TARGET LULUS</th>
                       <th className="pb-3 text-center">STATUS</th>
                       <th className="pb-3 text-right">AKSI</th>
@@ -795,6 +833,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           <span className="text-base">📝</span>
                           "{quiz.word}"
                         </td>
+                        <td className="py-4 text-center font-extrabold text-slate-500">{quiz.classCode || 'Semua'}</td>
 
                         <td className="py-4 text-center font-extrabold text-slate-500">{quiz.targetAccuracy}% Acc</td>
                         <td className="py-4 text-center">
@@ -834,6 +873,20 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
               </h3>
               
               <form onSubmit={handleAssignQuizSubmit} className="flex flex-col gap-5">
+                {classes.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-extrabold text-bisara-navy mb-2">TARGET KELAS</label>
+                    <select 
+                      value={targetClassCode}
+                      onChange={(e) => setTargetClassCode(e.target.value)}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-md outline-none text-sm font-semibold bg-white"
+                    >
+                      {classes.map(c => (
+                        <option key={c.id} value={c.code}>{c.name} ({c.code})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-extrabold text-bisara-navy mb-2">PILIH KOSAKATA TARGET</label>
                   <select 

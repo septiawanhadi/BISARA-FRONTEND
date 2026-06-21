@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home } from './components/screens/Home';
 import { Dictionary } from './components/screens/Dictionary';
 import { CameraTranslator } from './components/screens/CameraTranslator';
 import { VoiceTranslator } from './components/screens/VoiceTranslator';
 import { Quiz } from './components/screens/Quiz';
 import { TeacherDashboard } from './components/screens/TeacherDashboard';
-import type { UserProfile, DictionaryItem, QuizRound, AvatarConfig, Student, Classroom } from './types';
+import type { UserProfile, DictionaryItem, QuizRound, AvatarConfig, Student, Classroom, QuizAssignment, QuizSubmission } from './types';
+import { ApiService } from './lib/api';
 import { Bell, Home as HomeIcon, BookOpen, Camera, Mic, Award, Users, TrendingUp, Sliders, User } from 'lucide-react';
 
 // Static assets configurations inside App.tsx
@@ -77,6 +78,37 @@ export default function App() {
     quizCount: 1,
   });
 
+  const [assignedQuizzes, setAssignedQuizzes] = useState<QuizAssignment[]>([]);
+  const [quizSubmissions, setQuizSubmissions] = useState<QuizSubmission[]>([]);
+  const [studentClassCode, setStudentClassCode] = useState<string>('INK3A');
+
+  const loadAssignments = async (classCode?: string) => {
+    try {
+      const data = await ApiService.getAssignments(classCode);
+      setAssignedQuizzes(data);
+    } catch (err) {
+      console.error("Failed to fetch assignments:", err);
+    }
+  };
+
+  const loadSubmissions = async (classCode?: string) => {
+    try {
+      const data = await ApiService.getSubmissions(classCode);
+      setQuizSubmissions(data);
+    } catch (err) {
+      console.error("Failed to fetch submissions:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user.role === 'student' && studentClassCode) {
+      loadAssignments(studentClassCode);
+    } else if (user.role === 'Guru') {
+      loadAssignments();
+      loadSubmissions();
+    }
+  }, [studentClassCode, user.role]);
+
   const [dictionary] = useState<DictionaryItem[]>(initialDictionary);
   const [unlockedAvatars, setUnlockedAvatars] = useState<string[]>(["timi"]);
   const [selectedGesture, setSelectedGesture] = useState<DictionaryItem>(initialDictionary[9]); // default Terima Kasih
@@ -121,10 +153,12 @@ export default function App() {
 
       // Search classes for matching student code
       let foundStudent: Student | null = null;
+      let foundClass: Classroom | null = null;
       for (const c of classes) {
         const match = c.students.find(s => s.studentCode.toUpperCase() === codeInput.toUpperCase());
         if (match) {
           foundStudent = match;
+          foundClass = c;
           break;
         }
       }
@@ -132,6 +166,10 @@ export default function App() {
       if (!foundStudent) {
         alert("Kode Murid tidak terdaftar! Silakan hubungi guru Anda.");
         return;
+      }
+
+      if (foundClass) {
+        setStudentClassCode(foundClass.code);
       }
 
       setUser({
@@ -761,6 +799,10 @@ export default function App() {
               onUpdateProfile={(updatedFields) => setUser(prev => ({ ...prev, ...updatedFields }))}
               classes={classes}
               setClasses={setClasses}
+              assignedQuizzes={assignedQuizzes}
+              setAssignedQuizzes={setAssignedQuizzes}
+              quizSubmissions={quizSubmissions}
+              loadSubmissions={loadSubmissions}
             />
           ) : (
             <Home user={user} onNavigate={setCurrentView} />
@@ -803,6 +845,10 @@ export default function App() {
             onNavigate={setCurrentView}
             onQuizComplete={handleQuizComplete}
             triggerConfetti={triggerConfettiEffect}
+            assignedQuizzes={assignedQuizzes}
+            studentCode={user.username}
+            classCode={studentClassCode}
+            onLoadAssignments={() => loadAssignments(studentClassCode)}
           />
         )}
 
