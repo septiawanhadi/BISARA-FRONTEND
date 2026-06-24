@@ -34,7 +34,6 @@ export const Quiz: React.FC<QuizProps> = ({
   triggerConfetti,
   assignedQuizzes,
   studentCode,
-  classCode,
   onLoadAssignments
 }) => {
   const [currentLevel, setCurrentLevel] = useState<number | null>(null);

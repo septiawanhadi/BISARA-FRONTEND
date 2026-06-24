@@ -33,15 +33,6 @@ interface TeacherDashboardProps {
   loadSubmissions: (classCode?: string) => Promise<void>;
 }
 
-interface QuizAssignment {
-  id: string;
-  word: string;
-  targetAccuracy: number;
-  difficulty: string;
-  assignedDate: string;
-  status: 'Aktif' | 'Ditutup';
-}
-
 export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   activeTab,
   setActiveTab,
@@ -51,8 +42,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   setClasses,
   assignedQuizzes,
   setAssignedQuizzes,
-  quizSubmissions,
-  loadSubmissions
+  quizSubmissions
 }) => {
   const [targetClassCode, setTargetClassCode] = useState(classes[0]?.code || 'INK3A');
 

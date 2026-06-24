@@ -150,8 +150,8 @@ export const AvatarViewer: React.FC<AvatarViewerProps> = ({
 
   if (activeLetter) {
     const letter = activeLetter.toUpperCase();
-    const isAOrB = letter === 'A' || letter === 'B';
-    const imgSrc = isAOrB ? `/feedback/sign${letter}.png` : null;
+    const isSupported = letter.length === 1 && letter >= 'A' && letter <= 'Y';
+    const imgSrc = isSupported ? `/feedback/sign${letter}.png` : null;
 
     return (
       <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-slate-50 rounded-lg overflow-hidden">
@@ -164,7 +164,7 @@ export const AvatarViewer: React.FC<AvatarViewerProps> = ({
             animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           }
         `}</style>
-        {isAOrB && imgSrc ? (
+        {isSupported && imgSrc ? (
           <div className="flex flex-col items-center gap-3 animate-scale-in">
             <div className="relative w-[220px] h-[220px] bg-white border-4 border-bisara-accent rounded-2xl overflow-hidden shadow-lg flex items-center justify-center">
               <img 
@@ -193,7 +193,7 @@ export const AvatarViewer: React.FC<AvatarViewerProps> = ({
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Mengeja Huruf</span>
               <span className="text-2xl font-nunito font-black text-bisara-navy mt-1 block">{letter}</span>
               <span className="text-[11px] text-slate-400 font-bold mt-1.5 block leading-normal">
-                Visualisasi gambar hanya tersedia untuk huruf A dan B di modul latihan ini.
+                Visualisasi gambar hanya tersedia untuk huruf A sampai Y di modul latihan ini.
               </span>
             </div>
           </div>
