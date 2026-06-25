@@ -1,0 +1,752 @@
+[
+  {
+    "level": 1,
+    "word": "Saya",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Ketuk dada tengah Anda perlahan menggunakan ibu jari atau telapak tangan kanan terbuka.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Saya belajar matematika.",
+    "spok_breakdown": "Saya (S) - belajar (P) - matematika (O)",
+    "bisindo_sequence": "SAYA - BELAJAR - MATEMATIKA"
+  },
+  {
+    "level": 1,
+    "word": "Saya",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Ketuk dada tengah Anda perlahan menggunakan ibu jari atau telapak tangan kanan terbuka.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Saya makan nasi goreng.",
+    "spok_breakdown": "Saya (S) - makan (P) - nasi goreng (O)",
+    "bisindo_sequence": "SAYA - MAKAN - NASI - GORENG"
+  },
+  {
+    "level": 1,
+    "word": "Saya",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Ketuk dada tengah Anda perlahan menggunakan ibu jari atau telapak tangan kanan terbuka.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong bantu saya.",
+    "spok_breakdown": "Tolong (L) - bantu (P) - saya (O)",
+    "bisindo_sequence": "TOLONG - BANTU - SAYA"
+  },
+  {
+    "level": 1,
+    "word": "Makan",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk ujung-ujung jari tangan kanan menyatu lalu arahkan mendekati mulut berulang kali.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa makan roti di kantin.",
+    "spok_breakdown": "Siswa (S) - makan (P) - roti (O) - di kantin (K)",
+    "bisindo_sequence": "SISWA - MAKAN - ROTI - DI - KANTIN"
+  },
+  {
+    "level": 1,
+    "word": "Makan",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk ujung-ujung jari tangan kanan menyatu lalu arahkan mendekati mulut berulang kali.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kucing makan ikan.",
+    "spok_breakdown": "Kucing (S) - makan (P) - ikan (O)",
+    "bisindo_sequence": "KUCING - MAKAN - IKAN"
+  },
+  {
+    "level": 1,
+    "word": "Makan",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk ujung-ujung jari tangan kanan menyatu lalu arahkan mendekati mulut berulang kali.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Saya ingin makan buah.",
+    "spok_breakdown": "Saya (S) - ingin makan (P) - buah (O)",
+    "bisindo_sequence": "SAYA - MAKAN - BUAH"
+  },
+  {
+    "level": 1,
+    "word": "Buku",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Satukan kedua telapak tangan merapat, lalu buka perlahan seperti membuka lembaran buku.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Guru membagikan buku baru.",
+    "spok_breakdown": "Guru (S) - membagikan (P) - buku (O) - baru (L)",
+    "bisindo_sequence": "GURU - BAGI - BUKU - BARU"
+  },
+  {
+    "level": 1,
+    "word": "Buku",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Satukan kedua telapak tangan merapat, lalu buka perlahan seperti membuka lembaran buku.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Buku itu tebal sekali.",
+    "spok_breakdown": "Buku (S) - tebal (P) - sekali (L)",
+    "bisindo_sequence": "BUKU - TEBAL - SEKALI"
+  },
+  {
+    "level": 1,
+    "word": "Buku",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Satukan kedua telapak tangan merapat, lalu buka perlahan seperti membuka lembaran buku.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong ambilkan buku gambar.",
+    "spok_breakdown": "Tolong (L) - ambilkan (P) - buku gambar (O)",
+    "bisindo_sequence": "TOLONG - AMBIL - BUKU - GAMBAR"
+  },
+  {
+    "level": 1,
+    "word": "Sekolah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah dengan tangan, kemudian ketukkan ujung jari kanan di telapak kiri melambangkan belajar.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kami pergi ke sekolah pagi hari.",
+    "spok_breakdown": "Kami (S) - pergi (P) - ke sekolah (K) - pagi hari (K)",
+    "bisindo_sequence": "KAMI - PERGI - KE - SEKOLAH - PAGI"
+  },
+  {
+    "level": 1,
+    "word": "Sekolah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah dengan tangan, kemudian ketukkan ujung jari kanan di telapak kiri melambangkan belajar.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Gedung sekolah itu dicat biru.",
+    "spok_breakdown": "Gedung sekolah (S) - dicat (P) - biru (O)",
+    "bisindo_sequence": "GEDUNG - SEKOLAH - CAT - BIRU"
+  },
+  {
+    "level": 1,
+    "word": "Sekolah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah dengan tangan, kemudian ketukkan ujung jari kanan di telapak kiri melambangkan belajar.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Mari rapikan kelas di sekolah.",
+    "spok_breakdown": "Mari (L) - rapikan (P) - kelas (O) - di sekolah (K)",
+    "bisindo_sequence": "MARI - RAPI - KELAS - DI - SEKOLAH"
+  },
+  {
+    "level": 1,
+    "word": "Guru",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan ujung jari telunjuk dan jempol kanan di dekat kening kemudian gerakkan ke bawah.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Guru menjelaskan pelajaran sejarah.",
+    "spok_breakdown": "Guru (S) - menjelaskan (P) - pelajaran sejarah (O)",
+    "bisindo_sequence": "GURU - JELAS - PELAJARAN - SEJARAH"
+  },
+  {
+    "level": 1,
+    "word": "Guru",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan ujung jari telunjuk dan jempol kanan di dekat kening kemudian gerakkan ke bawah.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ibu saya seorang guru SLB.",
+    "spok_breakdown": "Ibu saya (S) - adalah (P) - guru SLB (O)",
+    "bisindo_sequence": "IBU - SAYA - GURU - S-L-B"
+  },
+  {
+    "level": 1,
+    "word": "Guru",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan ujung jari telunjuk dan jempol kanan di dekat kening kemudian gerakkan ke bawah.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Siswa memberi hormat kepada guru.",
+    "spok_breakdown": "Siswa (S) - memberi hormat (P) - kepada guru (O)",
+    "bisindo_sequence": "SISWA - HORMAT - GURU"
+  },
+  {
+    "level": 2,
+    "word": "Kiko",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Tutor kelinci pintar di platform Bisara.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kiko membantu teman tuli.",
+    "spok_breakdown": "Kiko (S) - membantu (P) - teman tuli (O)",
+    "bisindo_sequence": "KIKO - BANTU - TEMAN - TULI"
+  },
+  {
+    "level": 2,
+    "word": "Kiko",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Tutor kelinci pintar di platform Bisara.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kiko menggambar wortel lucu.",
+    "spok_breakdown": "Kiko (S) - menggambar (P) - wortel lucu (O)",
+    "bisindo_sequence": "KIKO - GAMBAR - WORTEL - LUCU"
+  },
+  {
+    "level": 2,
+    "word": "Kiko",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Tutor kelinci pintar di platform Bisara.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Berikan boneka itu kepada Kiko.",
+    "spok_breakdown": "Berikan (P) - boneka (O) - kepada Kiko (K)",
+    "bisindo_sequence": "KASIH - BONEKA - KIKO"
+  },
+  {
+    "level": 2,
+    "word": "Belajar",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Buka telapak tangan kiri mendatar di depan dada, lalu ketukkan ujung jari tangan kanan berulang kali di atas telapak tangan kiri.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kami belajar bahasa isyarat di kelas.",
+    "spok_breakdown": "Kami (S) - belajar (P) - bahasa isyarat (O) - di kelas (K)",
+    "bisindo_sequence": "KAMI - BELAJAR - BAHASA - ISYARAT - DI - KELAS"
+  },
+  {
+    "level": 2,
+    "word": "Belajar",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Buka telapak tangan kiri mendatar di depan dada, lalu ketukkan ujung jari tangan kanan berulang kali di atas telapak tangan kiri.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Saya belajar memasak kue di dapur.",
+    "spok_breakdown": "Saya (S) - belajar (P) - memasak kue (O) - di dapur (K)",
+    "bisindo_sequence": "SAYA - BELAJAR - MASAK - KUE - DI - DAPUR"
+  },
+  {
+    "level": 2,
+    "word": "Belajar",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Buka telapak tangan kiri mendatar di depan dada, lalu ketukkan ujung jari tangan kanan berulang kali di atas telapak tangan kiri.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong dampingi adik belajar.",
+    "spok_breakdown": "Tolong (L) - dampingi (P) - adik (O) - belajar (P)",
+    "bisindo_sequence": "TOLONG - TEMANI - ADIK - BELAJAR"
+  },
+  {
+    "level": 2,
+    "word": "Minum",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk genggaman tangan kanan seperti memegang gelas, lalu gerakkan ibu jari mengarah ke mulut seolah menenggak cairan.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Guru minum teh hangat di kantor.",
+    "spok_breakdown": "Guru (S) - minum (P) - teh hangat (O) - di kantor (K)",
+    "bisindo_sequence": "GURU - MINUM - TEH - HANGAT - DI - KANTOR"
+  },
+  {
+    "level": 2,
+    "word": "Minum",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk genggaman tangan kanan seperti memegang gelas, lalu gerakkan ibu jari mengarah ke mulut seolah menenggak cairan.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ayah minum susu putih.",
+    "spok_breakdown": "Ayah (S) - minum (P) - susu putih (O)",
+    "bisindo_sequence": "AYAH - MINUM - SUSU - PUTIH"
+  },
+  {
+    "level": 2,
+    "word": "Minum",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Bentuk genggaman tangan kanan seperti memegang gelas, lalu gerakkan ibu jari mengarah ke mulut seolah menenggak cairan.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Bolehkah saya meminta minum?",
+    "spok_breakdown": "Bolehkah saya (S) - meminta (P) - minum (O)",
+    "bisindo_sequence": "MINTA - MINUM"
+  },
+  {
+    "level": 2,
+    "word": "Tolong",
+    "role_default": "Lainnya (L)",
+    "bisindo_gesture": "Katupkan kedua telapak tangan di depan dada seakan memohon bantuan dengan santun.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Tolong hapus papan tulis itu.",
+    "spok_breakdown": "Tolong (L) - hapus (P) - papan tulis (O) - itu (L)",
+    "bisindo_sequence": "TOLONG - BERSIH - PAPAN - TULIS - ITU"
+  },
+  {
+    "level": 2,
+    "word": "Tolong",
+    "role_default": "Lainnya (L)",
+    "bisindo_gesture": "Katupkan kedua telapak tangan di depan dada seakan memohon bantuan dengan santun.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ibu, tolong ambilkan piring bersih.",
+    "spok_breakdown": "Ibu (S) - tolong (L) - ambilkan (P) - piring bersih (O)",
+    "bisindo_sequence": "IBU - TOLONG - AMBIL - PIRING - BERSIH"
+  },
+  {
+    "level": 2,
+    "word": "Tolong",
+    "role_default": "Lainnya (L)",
+    "bisindo_gesture": "Katupkan kedua telapak tangan di depan dada seakan memohon bantuan dengan santun.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong tunjukkan jalan ke stasiun.",
+    "spok_breakdown": "Tolong (L) - tunjukkan (P) - jalan (O) - ke stasiun (K)",
+    "bisindo_sequence": "TOLONG - TUNJUK - JALAN - KE - STASIUN"
+  },
+  {
+    "level": 3,
+    "word": "Ayah",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Letakkan jari telunjuk mendatar di atas bibir kanan melambangkan kumis.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Ayah menghadiri rapat wali murid.",
+    "spok_breakdown": "Ayah (S) - menghadiri (P) - rapat wali murid (O)",
+    "bisindo_sequence": "AYAH - DATANG - RAPAT - SEKOLAH"
+  },
+  {
+    "level": 3,
+    "word": "Ayah",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Letakkan jari telunjuk mendatar di atas bibir kanan melambangkan kumis.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ayah memotong rumput halaman.",
+    "spok_breakdown": "Ayah (S) - memotong (P) - rumput (O) - halaman (K)",
+    "bisindo_sequence": "AYAH - POTONG - RUMPUT - HALAMAN"
+  },
+  {
+    "level": 3,
+    "word": "Ayah",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Letakkan jari telunjuk mendatar di atas bibir kanan melambangkan kumis.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Adik memeluk Ayah erat-erat.",
+    "spok_breakdown": "Adik (S) - memeluk (P) - Ayah (O) - erat-erat (K)",
+    "bisindo_sequence": "ADIK - PELUK - AYAH - ERAT"
+  },
+  {
+    "level": 3,
+    "word": "Rumah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Satukan ujung-ujung jari kedua tangan di atas membentuk atap segitiga menyiku.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Guru berkunjung ke rumah Budi.",
+    "spok_breakdown": "Guru (S) - berkunjung (P) - ke rumah Budi (K)",
+    "bisindo_sequence": "GURU - MAIN - KE - RUMAH - BUDI"
+  },
+  {
+    "level": 3,
+    "word": "Rumah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Satukan ujung-ujung jari kedua tangan di atas membentuk atap segitiga menyiku.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kami mengecat dinding rumah.",
+    "spok_breakdown": "Kami (S) - mengecat (P) - dinding rumah (O)",
+    "bisindo_sequence": "KAMI - CAT - TEMBOK - RUMAH"
+  },
+  {
+    "level": 3,
+    "word": "Rumah",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Satukan ujung-ujung jari kedua tangan di atas membentuk atap segitiga menyiku.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong antarkan barang ini ke rumah.",
+    "spok_breakdown": "Tolong (L) - antarkan (P) - barang ini (O) - ke rumah (K)",
+    "bisindo_sequence": "TOLONG - ANTAR - BARANG - INI - KE - RUMAH"
+  },
+  {
+    "level": 3,
+    "word": "Kopi",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Tangan memegang cangkir lalu gerakkan memutar di atas telapak tangan kiri seolah mengaduk.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kepala sekolah meminum kopi hitam.",
+    "spok_breakdown": "Kepala sekolah (S) - meminum (P) - kopi hitam (O)",
+    "bisindo_sequence": "KEPALA - SEKOLAH - MINUM - KOPI - HITAM"
+  },
+  {
+    "level": 3,
+    "word": "Kopi",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Tangan memegang cangkir lalu gerakkan memutar di atas telapak tangan kiri seolah mengaduk.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kakak membuat segelas kopi manis.",
+    "spok_breakdown": "Kakak (S) - membuat (P) - segelas kopi manis (O)",
+    "bisindo_sequence": "KAKAK - BUAT - GELAS - KOPI - MANIS"
+  },
+  {
+    "level": 3,
+    "word": "Kopi",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Tangan memegang cangkir lalu gerakkan memutar di atas telapak tangan kiri seolah mengaduk.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong belikan bubuk kopi instan.",
+    "spok_breakdown": "Tolong (L) - belikan (P) - bubuk kopi instan (O)",
+    "bisindo_sequence": "TOLONG - BELI - KOPI - BUBUK"
+  },
+  {
+    "level": 3,
+    "word": "Membaca",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Dua jari kanan menunjuk mata lalu menyapu telapak tangan kiri yang terbuka.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa membaca buku modul perpustakaan.",
+    "spok_breakdown": "Siswa (S) - membaca (P) - buku modul (O) - perpustakaan (K)",
+    "bisindo_sequence": "SISWA - BACA - BUKU - PERPUSTAKAAN"
+  },
+  {
+    "level": 3,
+    "word": "Membaca",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Dua jari kanan menunjuk mata lalu menyapu telapak tangan kiri yang terbuka.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ayah membaca koran pagi hari.",
+    "spok_breakdown": "Ayah (S) - membaca (P) - koran (O) - pagi hari (K)",
+    "bisindo_sequence": "AYAH - BACA - KORAN - PAGI"
+  },
+  {
+    "level": 3,
+    "word": "Membaca",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Dua jari kanan menunjuk mata lalu menyapu telapak tangan kiri yang terbuka.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Saya senang membaca komik petualangan.",
+    "spok_breakdown": "Saya (S) - senang membaca (P) - komik petualangan (O)",
+    "bisindo_sequence": "SAYA - SUKA - BACA - KOMIK - PETUALANGAN"
+  },
+  {
+    "level": 4,
+    "word": "Ibu",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan jempol kanan di dagu lalu geser ke pipi kanan.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Ibu berkonsultasi dengan wali kelas.",
+    "spok_breakdown": "Ibu (S) - berkonsultasi (P) - dengan wali kelas (K)",
+    "bisindo_sequence": "IBU - BICARA - GURU - KELAS"
+  },
+  {
+    "level": 4,
+    "word": "Ibu",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan jempol kanan di dagu lalu geser ke pipi kanan.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ibu memasak sayur bayam hangat.",
+    "spok_breakdown": "Ibu (S) - memasak (P) - sayur bayam hangat (O)",
+    "bisindo_sequence": "IBU - MASAK - SAYUR - BAYAM - HANGAT"
+  },
+  {
+    "level": 4,
+    "word": "Ibu",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Sentuhkan jempol kanan di dagu lalu geser ke pipi kanan.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong bantu Ibu mencuci piring kotor.",
+    "spok_breakdown": "Tolong (L) - bantu Ibu (O) - mencuci (P) - piring kotor (O)",
+    "bisindo_sequence": "TOLONG - BANTU - IBU - CUCI - PIRING - KOTOR"
+  },
+  {
+    "level": 4,
+    "word": "Roti",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sisi luar tangan kanan menyayat kepalan tangan kiri berulang.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Anak-anak memakan roti cokelat saat istirahat.",
+    "spok_breakdown": "Anak-anak (S) - memakan (P) - roti cokelat (O) - saat istirahat (K)",
+    "bisindo_sequence": "ANAK - MAKAN - ROTI - COKELAT - ISTIRAHAT"
+  },
+  {
+    "level": 4,
+    "word": "Roti",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sisi luar tangan kanan menyayat kepalan tangan kiri berulang.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kakak memanggang roti tawar di oven.",
+    "spok_breakdown": "Kakak (S) - memanggang (P) - roti tawar (O) - di oven (K)",
+    "bisindo_sequence": "KAKAK - PANGGANG - ROTI - TAWAR - DI - OVEN"
+  },
+  {
+    "level": 4,
+    "word": "Roti",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sisi luar tangan kanan menyayat kepalan tangan kiri berulang.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong oleskan selai di atas roti bakar.",
+    "spok_breakdown": "Tolong (L) - oleskan (P) - selai (O) - di atas roti bakar (K)",
+    "bisindo_sequence": "TOLONG - OLES - SELAI - KE - ROTI - BAKAR"
+  },
+  {
+    "level": 4,
+    "word": "Kamus",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Buka telapak tangan seperti buku lalu eja huruf A ke Z.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa mencari arti kata di kamus.",
+    "spok_breakdown": "Siswa (S) - mencari (P) - arti kata (O) - di kamus (K)",
+    "bisindo_sequence": "SISWA - CARI - KATA - DI - KAMUS"
+  },
+  {
+    "level": 4,
+    "word": "Kamus",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Buka telapak tangan seperti buku lalu eja huruf A ke Z.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kamus bahasa Inggris itu tebal sekali.",
+    "spok_breakdown": "Kamus bahasa Inggris (S) - tebal (P) - sekali (L)",
+    "bisindo_sequence": "KAMUS - INGGRIS - TEBAL - SEKALI"
+  },
+  {
+    "level": 4,
+    "word": "Kamus",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Buka telapak tangan seperti buku lalu eja huruf A ke Z.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong pinjamkan saya kamus isyarat SIBI.",
+    "spok_breakdown": "Tolong (L) - pinjamkan (P) - saya (O) - kamus isyarat SIBI (O)",
+    "bisindo_sequence": "TOLONG - PINJAM - SAYA - KAMUS - S-I-B-I"
+  },
+  {
+    "level": 4,
+    "word": "Pergi",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Ayunkan telapak tangan kanan menghadap luar ke depan menjauh.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa pergi karyawisata ke museum.",
+    "spok_breakdown": "Siswa (S) - pergi (P) - karyawisata (L) - ke museum (K)",
+    "bisindo_sequence": "SISWA - PERGI - WISATA - KE - MUSEUM"
+  },
+  {
+    "level": 4,
+    "word": "Pergi",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Ayunkan telapak tangan kanan menghadap luar ke depan menjauh.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Ibu pergi berbelanja sayur ke pasar.",
+    "spok_breakdown": "Ibu (S) - pergi (P) - berbelanja sayur (L) - ke pasar (K)",
+    "bisindo_sequence": "IBU - PERGI - BELI - SAYUR - KE - PASAR"
+  },
+  {
+    "level": 4,
+    "word": "Pergi",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Ayunkan telapak tangan kanan menghadap luar ke depan menjauh.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Jangan pergi terlalu malam hari.",
+    "spok_breakdown": "Jangan pergi (P) - terlalu malam (K)",
+    "bisindo_sequence": "JANGAN - PERGI - MALAM"
+  },
+  {
+    "level": 5,
+    "word": "Kakak",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pelipis lalu angkat sedikit.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kakak mendaftar kuliah jurusan hukum.",
+    "spok_breakdown": "Kakak (S) - mendaftar (P) - kuliah hukum (O)",
+    "bisindo_sequence": "KAKAK - DAFTAR - KULIAH - HUKUM"
+  },
+  {
+    "level": 5,
+    "word": "Kakak",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pelipis lalu angkat sedikit.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kakak membersihkan jendela kamar.",
+    "spok_breakdown": "Kakak (S) - membersihkan (P) - jendela kamar (O)",
+    "bisindo_sequence": "KAKAK - BERSIH - JENDELA - KAMAR"
+  },
+  {
+    "level": 5,
+    "word": "Kakak",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pelipis lalu angkat sedikit.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong jemput Kakak di stasiun kereta.",
+    "spok_breakdown": "Tolong (L) - jemput (P) - Kakak (O) - di stasiun kereta (K)",
+    "bisindo_sequence": "TOLONG - JEMPUT - KAKAK - DI - STASIUN - KERETA"
+  },
+  {
+    "level": 5,
+    "word": "Menulis",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goreskan telunjuk-jempol kanan seperti memegang pena di atas telapak tangan kiri.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa menulis rangkuman materi di buku tulis.",
+    "spok_breakdown": "Siswa (S) - menulis (P) - rangkuman materi (O) - di buku tulis (K)",
+    "bisindo_sequence": "SISWA - TULIS - RANGKUMAN - DI - BUKU"
+  },
+  {
+    "level": 5,
+    "word": "Menulis",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goreskan telunjuk-jempol kanan seperti memegang pena di atas telapak tangan kiri.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kakak menulis diary rahasia.",
+    "spok_breakdown": "Kakak (S) - menulis (P) - diary rahasia (O)",
+    "bisindo_sequence": "KAKAK - TULIS - BUKU - RAHASIA"
+  },
+  {
+    "level": 5,
+    "word": "Menulis",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goreskan telunjuk-jempol kanan seperti memegang pena di atas telapak tangan kiri.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong menulis nama lengkap Anda di sini.",
+    "spok_breakdown": "Tolong (L) - menulis (P) - nama lengkap (O) - di sini (K)",
+    "bisindo_sequence": "TOLONG - TULIS - NAMA - LENGKAP - DI - SINI"
+  },
+  {
+    "level": 5,
+    "word": "Surat",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sentuhkan jempol kanan ke bibir lalu tempel ke telapak kiri.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Guru mengirimkan surat undangan resmi.",
+    "spok_breakdown": "Guru (S) - mengirimkan (P) - surat undangan resmi (O)",
+    "bisindo_sequence": "GURU - KIRIM - SURAT - UNDANGAN - RESMI"
+  },
+  {
+    "level": 5,
+    "word": "Surat",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sentuhkan jempol kanan ke bibir lalu tempel ke telapak kiri.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Kakak menerima surat cinta.",
+    "spok_breakdown": "Kakak (S) - menerima (P) - surat cinta (O)",
+    "bisindo_sequence": "KAKAK - TERIMA - SURAT - CINTA"
+  },
+  {
+    "level": 5,
+    "word": "Surat",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Sentuhkan jempol kanan ke bibir lalu tempel ke telapak kiri.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong poskan surat kilat ini.",
+    "spok_breakdown": "Tolong (L) - poskan (P) - surat kilat ini (O)",
+    "bisindo_sequence": "TOLONG - KIRIM - SURAT - CEPAT - INI"
+  },
+  {
+    "level": 5,
+    "word": "Kantor",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah lalu ketuk dada kiri.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Ayah bekerja di kantor pemerintahan.",
+    "spok_breakdown": "Ayah (S) - bekerja (P) - di kantor pemerintahan (K)",
+    "bisindo_sequence": "AYAH - KERJA - DI - KANTOR - KOTA"
+  },
+  {
+    "level": 5,
+    "word": "Kantor",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah lalu ketuk dada kiri.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Gedung kantor itu sangat tinggi.",
+    "spok_breakdown": "Gedung kantor (S) - tinggi (P)",
+    "bisindo_sequence": "GEDUNG - KANTOR - TINGGI"
+  },
+  {
+    "level": 5,
+    "word": "Kantor",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gambarkan atap rumah lalu ketuk dada kiri.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Mari kunjungi kantor guru sekarang.",
+    "spok_breakdown": "Mari (L) - kunjungi (P) - kantor guru (O)",
+    "bisindo_sequence": "MARI - PERGI - KANTOR - GURU - SEKARANG"
+  },
+  {
+    "level": 6,
+    "word": "Adik",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pinggul lalu turunkan sedikit.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Adik belajar membaca abjad SIBI.",
+    "spok_breakdown": "Adik (S) - belajar membaca (P) - abjad SIBI (O)",
+    "bisindo_sequence": "ADIK - BELAJAR - BACA - A-B-C - S-I-B-I"
+  },
+  {
+    "level": 6,
+    "word": "Adik",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pinggul lalu turunkan sedikit.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Adik menangis mencari mainan hilang.",
+    "spok_breakdown": "Adik (S) - menangis (P) - mencari mainan hilang (O)",
+    "bisindo_sequence": "ADIK - NANGIS - CARI - MAINAN - HILANG"
+  },
+  {
+    "level": 6,
+    "word": "Adik",
+    "role_default": "Subjek (S)",
+    "bisindo_gesture": "Posisikan telapak tangan kanan menghadap bawah di dekat pinggul lalu turunkan sedikit.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong jagakan Adik sore hari ini.",
+    "spok_breakdown": "Tolong (L) - jagakan (P) - Adik (O) - sore hari (K)",
+    "bisindo_sequence": "TOLONG - JAGA - ADIK - SORE - INI"
+  },
+  {
+    "level": 6,
+    "word": "Bermain",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goyangkan pergelangan tangan kiri-kanan memutar bergantian dengan riang.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa bermain petak umpet saat istirahat.",
+    "spok_breakdown": "Siswa (S) - bermain (P) - petak umpet (O) - saat istirahat (K)",
+    "bisindo_sequence": "SISWA - MAIN - PETAK - UMPET - ISTIRAHAT"
+  },
+  {
+    "level": 6,
+    "word": "Bermain",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goyangkan pergelangan tangan kiri-kanan memutar bergantian dengan riang.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Adik bermain robot di ruang tamu.",
+    "spok_breakdown": "Adik (S) - bermain (P) - robot (O) - di ruang tamu (K)",
+    "bisindo_sequence": "ADIK - MAIN - ROBOT - DI - RUANG - TAMU"
+  },
+  {
+    "level": 6,
+    "word": "Bermain",
+    "role_default": "Predikat (P)",
+    "bisindo_gesture": "Goyangkan pergelangan tangan kiri-kanan memutar bergantian dengan riang.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Mari bermain bersama teman inklusi.",
+    "spok_breakdown": "Mari (L) - bermain (P) - bersama teman inklusi (K)",
+    "bisindo_sequence": "MARI - MAIN - BARENG - TEMAN - INKLUSI"
+  },
+  {
+    "level": 6,
+    "word": "Bola",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Jari kedua tangan melengkung seolah memegang lingkaran bola bulat.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Kami menendang bola kulit ke gawang.",
+    "spok_breakdown": "Kami (S) - menendang (P) - bola kulit (O) - ke gawang (K)",
+    "bisindo_sequence": "KAMI - TENDANG - BOLA - KULIT - KE - GAWANG"
+  },
+  {
+    "level": 6,
+    "word": "Bola",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Jari kedua tangan melengkung seolah memegang lingkaran bola bulat.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Adik membeli bola karet merah.",
+    "spok_breakdown": "Adik (S) - membeli (P) - bola karet (O) - merah (L)",
+    "bisindo_sequence": "ADIK - BELI - BOLA - KARET - MERAH"
+  },
+  {
+    "level": 6,
+    "word": "Bola",
+    "role_default": "Objek (O)",
+    "bisindo_gesture": "Jari kedua tangan melengkung seolah memegang lingkaran bola bulat.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong ambilkan bola tenis itu.",
+    "spok_breakdown": "Tolong (L) - ambilkan (P) - bola tenis (O) - itu (L)",
+    "bisindo_sequence": "TOLONG - AMBIL - BOLA - TENIS - ITU"
+  },
+  {
+    "level": 6,
+    "word": "Lapangan",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gerakkan kedua telapak tangan datar ke luar membentuk persegi panjang datar luas.",
+    "context_type": "Formal/Sekolah",
+    "sentence": "Siswa berbaris di lapangan upacara.",
+    "spok_breakdown": "Siswa (S) - berbaris (P) - di lapangan upacara (K)",
+    "bisindo_sequence": "SISWA - BARIS - DI - LAPANGAN - UPACARA"
+  },
+  {
+    "level": 6,
+    "word": "Lapangan",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gerakkan kedua telapak tangan datar ke luar membentuk persegi panjang datar luas.",
+    "context_type": "Santai/Rumah",
+    "sentence": "Anak-anak berlari di lapangan rumput.",
+    "spok_breakdown": "Anak-anak (S) - berlari (P) - di lapangan rumput (K)",
+    "bisindo_sequence": "ANAK - LARI - DI - LAPANGAN - RUMPUT"
+  },
+  {
+    "level": 6,
+    "word": "Lapangan",
+    "role_default": "Keterangan (K)",
+    "bisindo_gesture": "Gerakkan kedua telapak tangan datar ke luar membentuk persegi panjang datar luas.",
+    "context_type": "Sosial/Permohonan",
+    "sentence": "Tolong bersihkan sampah di lapangan.",
+    "spok_breakdown": "Tolong (L) - bersihkan (P) - sampah (O) - di lapangan (K)",
+    "bisindo_sequence": "TOLONG - BERSIH - SAMPAH - DI - LAPANGAN"
+  }
+]
